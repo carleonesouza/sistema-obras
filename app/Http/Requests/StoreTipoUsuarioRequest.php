@@ -24,7 +24,7 @@ class StoreTipoUsuarioRequest extends FormRequest
     public function rules()
     {
         return [
-            'descricao' => 'required|string|max:255'
+            'descricao' => 'required|string|max:50'
         ];
     }
 }

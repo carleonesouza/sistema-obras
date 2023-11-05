@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
+use App\Http\Resources\UsuarioResource;
 
 class UsuarioController extends Controller
 {
@@ -16,17 +17,7 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-      return Usuario::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return UsuarioResource::collection(Usuario::all());
     }
 
     /**
@@ -37,7 +28,8 @@ class UsuarioController extends Controller
      */
     public function store(StoreUsuarioRequest $request)
     {
-        //
+        $usuario = Usuario::create($request->validated());
+        return UsuarioResource::make($usuario);
     }
 
     /**
@@ -48,18 +40,7 @@ class UsuarioController extends Controller
      */
     public function show(Usuario $usuario)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Usuario $usuario)
-    {
-        //
+        return UsuarioResource::make($usuario);
     }
 
     /**
@@ -70,8 +51,9 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateUsuarioRequest $request, Usuario $usuario)
-    {
-        //
+    {       
+         $usuario->update($request->all());
+         return UsuarioResource::make($usuario);
     }
 
     /**
@@ -82,6 +64,7 @@ class UsuarioController extends Controller
      */
     public function destroy(Usuario $usuario)
     {
-        //
+        $usuario->delete();
+        return response()->noContent();
     }
 }

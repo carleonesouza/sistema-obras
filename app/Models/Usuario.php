@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Usuario extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'nome',
+        'telefone',
+        'email',
+        'instituicao_setor',
+        'tipo_usuario_id',
+        'senha'
+    ];
 
-    public $id;
-    public $nome;
-    public $telefone;
-    public $email;
-    public $instituicao_setor;
-    public $tipo_usuario;
-    protected $senha;
 }
