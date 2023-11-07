@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Http\Requests\StoreUsuarioRequest;
 use App\Http\Requests\UpdateUsuarioRequest;
 use App\Http\Resources\UsuarioResource;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
@@ -28,7 +29,15 @@ class UsuarioController extends Controller
      */
     public function store(StoreUsuarioRequest $request)
     {
-        $usuario = Usuario::create($request->validated());
+        $request->validated();
+        $usuario = Usuario::create([
+            'nome' => $request->nome,
+            'instituicao_setor' => $request->instituicao_setor,
+            'telefone' => $request->telefone,
+            'email' => $request->email,
+            'tipo_usuario_id' => $request->tipo_usuario_id,
+            'senha' => Hash::make($request->senha),
+        ]);
         return UsuarioResource::make($usuario);
     }
 
