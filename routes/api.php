@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\TipoUsuarioController;
-use App\Http\Controllers\Api\V1\UsuarioController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +24,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
-    Route::apiResource('/usuarios', UsuarioController::class);
+    Route::apiResource('/usuarios', UserController::class);
+    
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

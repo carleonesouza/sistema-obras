@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Models\Usuario;
+use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -14,24 +16,30 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $request->validated($request->only(['email', 'senha']));
+        $validated = $request->validated();
 
-        if(!Auth::attempt($request->only(['email', 'senha']))) {
-            return $this->error('', 'Credentials do not match', 401);
+        $user = User::where('email', $validated['email'])->first();
+        if (!$user || !Hash::check($validated['senha'], $user->senha)) {
+            return [
+                'message' => 'These credentials do not match our records.'
+            ];
         }
+        
+        Log::channel('user_activity')->info('User action', ['user' => $user->email, 'action' => 'Login']);
 
-        $user = Usuario::where('email', $request->email)->first();
-
-        return $this->success([
+        return [
             'user' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
-        ]);
+            'token' => $user->createToken($user->email)->plainTextToken
+        ];
+      
+
     }
 
     public function logout()
     {
-        Auth::usuario()->currentAccessToken()->delete();
+        Auth::user()->currentAccessToken()->delete();
 
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Logout']);
         return $this->success([
             'message' => 'You have succesfully been logged out and your token has been removed'
         ]);

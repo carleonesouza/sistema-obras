@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->string('instrumento');
             $table->foreignId('setor_id')->references('id')->on('setors');
-            $table->foreignId('usuario_id')->references('id')->on('usuarios');
+            $table->foreignId('usuario_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

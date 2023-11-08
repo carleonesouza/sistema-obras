@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('empreendimentos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('setor_id')->references('id')->on('setors');
-            $table->foreignId('usuario_id')->references('id')->on('usuarios');
+            $table->foreignId('usuario_id')->references('id')->on('users');
             $table->string('nome');
             $table->string('responsavel');
             $table->timestamps();

@@ -7,6 +7,8 @@ use App\Models\TipoUsuario;
 use App\Http\Requests\StoreTipoUsuarioRequest;
 use App\Http\Requests\UpdateTipoUsuarioRequest;
 use App\Http\Resources\TipoUsuarioResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TipoUsuarioController extends Controller
 {
@@ -17,6 +19,7 @@ class TipoUsuarioController extends Controller
      */
     public function index()
     {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Tipo Usuário']);
         return TipoUsuarioResource::collection(TipoUsuario::all());
     }
 
@@ -28,6 +31,7 @@ class TipoUsuarioController extends Controller
      */
     public function store(StoreTipoUsuarioRequest $request)
     {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criar Tipo Usuário']);
         $tipoUsuario = TipoUsuario::create($request->validated());
         return TipoUsuarioResource::make($tipoUsuario);
     }
@@ -40,6 +44,7 @@ class TipoUsuarioController extends Controller
      */
     public function show(TipoUsuario $tipoUsuario)
     {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultar Tipo Usuário pelo ID']);
        return TipoUsuarioResource::make($tipoUsuario);
     }
 
@@ -52,6 +57,7 @@ class TipoUsuarioController extends Controller
      */
     public function update(UpdateTipoUsuarioRequest $request, TipoUsuario $tipoUsuario)
     {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizar Tipo Usuário pelo ID']);
         $tipoUsuario->update($request->validated());
         return TipoUsuarioResource::make($tipoUsuario);
 
@@ -65,6 +71,7 @@ class TipoUsuarioController extends Controller
      */
     public function destroy(TipoUsuario $tipoUsuario)
     {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletar Tipo Usuário pelo ID']);
         $tipoUsuario->delete();
         return response()->noContent();
     }
