@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -32,7 +35,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criar Usuário']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Usuário']);
         $request->validated();
         $user = User::create([
             'nome' => $request->nome,
@@ -54,10 +57,9 @@ class UserController extends Controller
     public function show($userId)
     {
         
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultar Usuário pelo ID']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Usuário pelo ID']);
 
         $user = User::find($userId);
-        Log::info('User:', ['user' => $user]);
     
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
@@ -73,13 +75,28 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, User $user)
-    {       
-         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualiar Usuário pelo ID']);
+    public function update(UpdateUserRequest $request)
+    {
+        try {
+            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID']);
+            
+            $user = User::find($request->id);
 
-         $user->update($request->all());
-         return UserResource::make($user);
-    }
+            if($user){
+                $user->update($request->all());
+                return UserResource::make($user);
+            }
+           
+            return throw ValidationException::withMessages(['Não foi possível atualizar o Usuário']);;
+           
+        } catch (Exception $e) {
+            // Log the exception for debugging purposes.
+            Log::error('Error updating user: ' . $e->getMessage());
+    
+            // Return an error response or handle the error as needed.
+            return response()->json(['message' => 'Failed to update user.'], 500);
+        }
+    }  
 
     /**
      * Remove the specified resource from storage.
@@ -87,10 +104,21 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(DeleteUserRequest $request, User $user)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletar Usuário pelo ID']);
-        $user->delete();
+        
+        // Attempt to find the user by ID.
+        $user::where('id', $request->id)->delete();
+    
+        if (!$user) {
+            // User with the specified ID was not found.
+            return response()->json(['message' => $user], 404);
+        }
+    
+      
+    
         return response()->noContent();
     }
+    
 }

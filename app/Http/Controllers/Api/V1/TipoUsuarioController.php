@@ -31,7 +31,7 @@ class TipoUsuarioController extends Controller
      */
     public function store(StoreTipoUsuarioRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criar Tipo Usuário']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Usuário']);
         $tipoUsuario = TipoUsuario::create($request->validated());
         return TipoUsuarioResource::make($tipoUsuario);
     }
@@ -44,7 +44,7 @@ class TipoUsuarioController extends Controller
      */
     public function show(TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultar Tipo Usuário pelo ID']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Tipo Usuário pelo ID']);
        return TipoUsuarioResource::make($tipoUsuario);
     }
 
@@ -57,7 +57,7 @@ class TipoUsuarioController extends Controller
      */
     public function update(UpdateTipoUsuarioRequest $request, TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizar Tipo Usuário pelo ID']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Tipo Usuário pelo ID']);
         $tipoUsuario->update($request->validated());
         return TipoUsuarioResource::make($tipoUsuario);
 
@@ -71,7 +71,7 @@ class TipoUsuarioController extends Controller
      */
     public function destroy(TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletar Tipo Usuário pelo ID']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Tipo Usuário pelo ID']);
         $tipoUsuario->delete();
         return response()->noContent();
     }
