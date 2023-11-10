@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\IniciativaController;
+use App\Http\Controllers\Api\V1\SetorController;
 use App\Http\Controllers\Api\V1\TipoUsuarioController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
@@ -25,6 +27,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
     Route::apiResource('/usuarios', UserController::class);
+    Route::apiResource('/setores', SetorController::class);
+    Route::apiResource('/iniciativas', IniciativaController::class);
     
 });
 

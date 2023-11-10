@@ -13,7 +13,7 @@ class StoreSetorRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class StoreSetorRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'descricao' => ['required', 'string', 'max:50'],
         ];
     }
 }

@@ -45,7 +45,7 @@ class TipoUsuarioController extends Controller
     public function show(TipoUsuario $tipoUsuario)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Tipo Usuário pelo ID']);
-       return TipoUsuarioResource::make($tipoUsuario);
+        return TipoUsuarioResource::make($tipoUsuario);
     }
 
     /**

@@ -113,7 +113,7 @@ class UserController extends Controller
     
         if (!$user) {
             // User with the specified ID was not found.
-            return response()->json(['message' => $user], 404);
+            return response()->json(['message' => 'Usuario não encontrado!'], 404);
         }
     
       

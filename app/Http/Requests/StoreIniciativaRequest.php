@@ -13,7 +13,7 @@ class StoreIniciativaRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,15 @@ class StoreIniciativaRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'nome' => ['required', 'string', 'max:200'],
+            'responsavel' => ['required', 'string', 'max:200'],
+            'ele_principal_afetado'=> ['required', 'string', 'max:200'],
+            'expectativa'=> ['required', 'string', 'max:200'],
+            'status'=> ['required'],
+            'instrumento' => ['required','string', 'max:200'],
+            'setor'=>['required'],
+            'usuario' =>['required'],
+            'usuario_alteracao' =>['required'],
         ];
     }
 }

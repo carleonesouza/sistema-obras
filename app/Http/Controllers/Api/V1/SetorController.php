@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Models\Setor;
 use App\Http\Requests\StoreSetorRequest;
 use App\Http\Requests\UpdateSetorRequest;
+use App\Http\Resources\SetorResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SetorController extends Controller
 {
@@ -15,17 +19,8 @@ class SetorController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Setor']);
+        return SetorResource::collection(Setor::all());
     }
 
     /**
@@ -36,7 +31,9 @@ class SetorController extends Controller
      */
     public function store(StoreSetorRequest $request)
     {
-        //
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Setor']);
+        $tipoUsuario = Setor::create($request->validated());
+        return SetorResource::make($tipoUsuario);
     }
 
     /**
@@ -47,18 +44,8 @@ class SetorController extends Controller
      */
     public function show(Setor $setor)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Setor  $setor
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Setor $setor)
-    {
-        //
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Setor pelo ID']);
+        return SetorResource::make($setor);
     }
 
     /**
@@ -70,7 +57,9 @@ class SetorController extends Controller
      */
     public function update(UpdateSetorRequest $request, Setor $setor)
     {
-        //
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Setor pelo ID']);
+        $setor->update($request->validated());
+        return SetorResource::make($setor);
     }
 
     /**
@@ -81,6 +70,8 @@ class SetorController extends Controller
      */
     public function destroy(Setor $setor)
     {
-        //
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Setor pelo ID']);
+        $setor->delete();
+        return response()->noContent();
     }
 }

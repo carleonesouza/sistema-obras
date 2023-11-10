@@ -21,8 +21,9 @@ return new class extends Migration
             $table->string('expectativa');
             $table->boolean('status')->default(true);
             $table->string('instrumento');
-            $table->foreignId('setor_id')->references('id')->on('setors');
-            $table->foreignId('usuario_id')->references('id')->on('users');
+            $table->foreignId('setor')->references('id')->on('setors');
+            $table->foreignId('usuario')->references('id')->on('users');
+            $table->foreignId('usuario_alteracao')->references('id')->on('users');
             $table->timestamps();
         });
     }
