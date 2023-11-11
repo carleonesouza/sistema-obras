@@ -29,12 +29,18 @@ return [
     | your application ready for upcoming major versions of dependencies.
     |
     */
-    'user_activity' => [
-        'driver' => 'single',
-        'path' => storage_path('logs/user_activity.log'),
-        'level' => 'info',
+    'channels' => [
+        // Other log channels...
+    
+        'user_activity' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/user_activity.log'),
+            'level' => 'info',
+        ],
+    
+        // Additional log channels...
     ],
-
+    
     'deprecations' => [
         'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
         'trace' => false,

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteUserRequest;
+use App\Http\Requests\Setors\UpdateSetorRequest;
 use App\Models\Setor;
+use Exception;
 use App\Http\Requests\StoreSetorRequest;
-use App\Http\Requests\UpdateSetorRequest;
 use App\Http\Resources\SetorResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class SetorController extends Controller
 {
@@ -42,9 +45,16 @@ class SetorController extends Controller
      * @param  \App\Models\Setor  $setor
      * @return \Illuminate\Http\Response
      */
-    public function show(Setor $setor)
+    public function show($id)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Setor pelo ID']);
+
+        $setor = Setor::find($id);
+    
+        if (!$setor) {
+            return response()->json(['message' => 'Setor não encontrado!'], 404);
+        }
+    
         return SetorResource::make($setor);
     }
 
@@ -55,11 +65,27 @@ class SetorController extends Controller
      * @param  \App\Models\Setor  $setor
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSetorRequest $request, Setor $setor)
+    public function update(UpdateSetorRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Setor pelo ID']);
-        $setor->update($request->validated());
-        return SetorResource::make($setor);
+        try {
+            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Setor pelo ID']);
+            
+            $setor = Setor::find($request->id);
+
+            if($setor){
+                $setor->update($request->all());
+                return SetorResource::make($setor);
+            }
+           
+            return throw ValidationException::withMessages(['Não foi possível atualizar o Setor']);;
+           
+        } catch (Exception $e) {
+            // Log the exception for debugging purposes.
+            Log::error('Error updating user: ' . $e->getMessage());
+    
+            // Return an error response or handle the error as needed.
+            return response()->json(['message' => 'Falha ao Atualizar Setor.'], 500);
+        }
     }
 
     /**
@@ -68,10 +94,17 @@ class SetorController extends Controller
      * @param  \App\Models\Setor  $setor
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Setor $setor)
+    public function destroy(DeleteUserRequest $request, Setor $setor)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Setor pelo ID']);
-        $setor->delete();
+        // Attempt to find the user by ID.
+        $setor::where('id', $request->id)->delete();
+    
+        if (!$setor) {
+            // User with the specified ID was not found.
+            return response()->json(['message' => 'Setor não encontrado!'], 404);
+        }
+        
         return response()->noContent();
     }
 }

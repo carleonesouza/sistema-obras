@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Iniciativas;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -31,8 +31,7 @@ class StoreIniciativaRequest extends FormRequest
             'status'=> ['required'],
             'instrumento' => ['required','string', 'max:200'],
             'setor'=>['required'],
-            'usuario' =>['required'],
-            'usuario_alteracao' =>['required'],
+            'usuario' =>['required']
         ];
     }
 }

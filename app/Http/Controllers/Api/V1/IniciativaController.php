@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Iniciativas\DeleteIniciativaRequest;
+use App\Http\Requests\Iniciativas\StoreIniciativaRequest;
+use App\Http\Requests\Iniciativas\UpdateIniciativaRequest;
 use App\Models\Iniciativa;
-use App\Http\Requests\StoreIniciativaRequest;
-use App\Http\Requests\UpdateIniciativaRequest;
 use App\Http\Resources\IniciativaResource;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +52,7 @@ class IniciativaController extends Controller
         $iniciativa = Iniciativa::find($id);
     
         if (!$iniciativa) {
-            return response()->json(['message' => 'Iniciativa not found'], 404);
+            return response()->json(['message' => 'Iniciativa não Encontrada'], 404);
         }
     
         return IniciativaResource::make($iniciativa);
@@ -68,7 +69,8 @@ class IniciativaController extends Controller
     {
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Iniciativa pelo ID']);
-            
+
+        
             $iniciativa = Iniciativa::find($request->id);
 
             if($iniciativa){
@@ -76,14 +78,13 @@ class IniciativaController extends Controller
                 return IniciativaResource::make($iniciativa);
             }
            
-            return throw ValidationException::withMessages(['Não foi possível atualizar a Iniciativa']);;
            
         } catch (Exception $e) {
             // Log the exception for debugging purposes.
             Log::error('Error updating iniciativa: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json(['message' => 'Failed to update iniciativa.'], 500);
+            return response()->json(['message' => 'Falha ao atualizar iniciativa.'], 500);
         }
     }
 
@@ -93,10 +94,17 @@ class IniciativaController extends Controller
      * @param  \App\Models\Iniciativa  $iniciativa
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Iniciativa $iniciativa)
+    public function destroy(DeleteIniciativaRequest $request, Iniciativa $iniciativa)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Iniciativa pelo ID']);
-        $iniciativa->delete();
-        return response()->noContent();
+         // Attempt to find the user by ID.
+         $iniciativa::where('id', $request->id)->delete();
+    
+         if (!$iniciativa) {
+             // User with the specified ID was not found.
+             return response()->json(['message' => 'Iniciativa não encontrada!'], 404);
+         }
+         
+         return response()->noContent();
     }
 }

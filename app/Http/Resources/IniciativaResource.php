@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Iniciativa;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class IniciativaResource extends JsonResource
@@ -14,6 +15,17 @@ class IniciativaResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => (string) $this->id,
+            'nome' => $this->nome,
+            'responsavel' => $this->responsavel,
+            'ele_principal_afetado' => $this->ele_principal_afetado,
+            'expectativa' => $this->expectativa,
+            'instrumento' => $this->instrumento,
+            'setor' => Iniciativa::where('setor', $this->setor)->with('setor')->first(),
+            'usuario' => Iniciativa::where('usuario', $this->usuario)->with('usuario')->first(),
+            'usuario_alteracao' => $this->usuario_alteracao,
+            'status' => $this->status
+        ];
     }
 }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('instrumento');
             $table->foreignId('setor')->references('id')->on('setors');
             $table->foreignId('usuario')->references('id')->on('users');
-            $table->foreignId('usuario_alteracao')->references('id')->on('users');
+            $table->string('usuario_alteracao')->nullable();
             $table->timestamps();
         });
     }
