@@ -52,7 +52,7 @@ class SetorController extends Controller
         $setor = Setor::find($id);
     
         if (!$setor) {
-            return response()->json(['message' => 'Setor não encontrado!'], 404);
+            return response()->json('Setor não encontrado!', 404);
         }
     
         return SetorResource::make($setor);
@@ -84,7 +84,7 @@ class SetorController extends Controller
             Log::error('Error updating user: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json(['message' => 'Falha ao Atualizar Setor.'], 500);
+            return response()->json('Falha ao Atualizar Setor.', 500);
         }
     }
 
@@ -102,7 +102,7 @@ class SetorController extends Controller
     
         if (!$setor) {
             // User with the specified ID was not found.
-            return response()->json(['message' => 'Setor não encontrado!'], 404);
+            return response()->json( 'Setor não encontrado!', 404);
         }
         
         return response()->noContent();

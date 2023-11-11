@@ -52,7 +52,7 @@ class IniciativaController extends Controller
         $iniciativa = Iniciativa::find($id);
     
         if (!$iniciativa) {
-            return response()->json(['message' => 'Iniciativa não Encontrada'], 404);
+            return response()->json('Iniciativa não Encontrada', 404);
         }
     
         return IniciativaResource::make($iniciativa);
@@ -84,7 +84,7 @@ class IniciativaController extends Controller
             Log::error('Error updating iniciativa: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json(['message' => 'Falha ao atualizar iniciativa.'], 500);
+            return response()->json('Falha ao atualizar iniciativa.', 500);
         }
     }
 
@@ -102,7 +102,7 @@ class IniciativaController extends Controller
     
          if (!$iniciativa) {
              // User with the specified ID was not found.
-             return response()->json(['message' => 'Iniciativa não encontrada!'], 404);
+             return response()->json('Iniciativa não encontrada!', 404);
          }
          
          return response()->noContent();
