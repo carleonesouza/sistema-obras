@@ -25,10 +25,13 @@ class AuthController extends Controller
             ];
         }
         
+        $user->load('tipoUsuario');
+
         Log::channel('user_activity')->info('User action', ['user' => $user->email, 'action' => 'Login']);
 
         return [
             'user' => $user,
+            'tipo_usuario' => $user->tipoUsuario,
             'token' => $user->createToken($user->email)->plainTextToken
         ];
       
@@ -37,7 +40,8 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::user()->currentAccessToken()->delete();
+        $user = request()->user();
+        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
 
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Logout']);
         return $this->success([

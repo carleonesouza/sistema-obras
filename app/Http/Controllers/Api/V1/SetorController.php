@@ -22,7 +22,7 @@ class SetorController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Setor']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listou Setores']);
         return SetorResource::collection(Setor::all());
     }
 

@@ -41,5 +41,7 @@ USER ${USER}
 COPY --chown=${USER}:${GROUP} . .
 
 EXPOSE 8080
+# set hostname to localhost
+ENV HOSTNAME "0.0.0.0"
 
 CMD ["php-fpm"]

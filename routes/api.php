@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 
 // Protected routes
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
     Route::apiResource('/usuarios', UserController::class);

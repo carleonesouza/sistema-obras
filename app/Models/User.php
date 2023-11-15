@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Iniciativa::class);
     }
+
+    public function hasRole($role): bool
+    {
+        return $this->tipoUsuario()->where('descricao', $role)->exists();
+    }
 }
