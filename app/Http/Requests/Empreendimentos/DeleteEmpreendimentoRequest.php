@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Empreendimentos;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEmpreendimentoRequest extends FormRequest
+class DeleteEmpreendimentoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class UpdateEmpreendimentoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**

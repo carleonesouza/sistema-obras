@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('obras', function (Blueprint $table) {
             $table->id();
+            $table->string('respondente');
             $table->string('descricao');
-            $table->foreignId('tipo_infraestrutura_id')->references('id')->on('tipo_infraestruturas');
+            $table->string('intervencao');
+            $table->foreignId('tipo_infraestrutura')->references('id')->on('tipo_infraestruturas');
             $table->date('data_inicio');
             $table->date('data_conclusao');
             $table->date('data_orcamento');
@@ -25,8 +27,10 @@ return new class extends Migration
             $table->boolean('status');
             $table->string('instrumento');
             $table->string('doc_adicionais');
-            $table->foreignId('endereco_id')->references('id')->on('enderecos');
+            $table->foreignId('endereco')->references('id')->on('enderecos')->onDelete('cascade');
             $table->string('arq_georeferenciado');
+            $table->foreignId('empreendimento')->constrained()->onDelete('cascade');
+            $table->string('tipo');
             $table->timestamps();
         });
     }

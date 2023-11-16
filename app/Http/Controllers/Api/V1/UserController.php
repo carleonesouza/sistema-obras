@@ -94,7 +94,7 @@ class UserController extends Controller
             Log::error('Error updating user: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json(['message' => 'Falha ao Atualizar usuário.'], 500);
+            return response()->json(['message' => 'Falha ao Atualizar usuário: '.$e->getMessage()], 500);
         }
     }  
 

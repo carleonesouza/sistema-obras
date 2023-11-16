@@ -11,7 +11,6 @@ use App\Http\Resources\IniciativaResource;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class IniciativaController extends Controller
 {
@@ -84,7 +83,7 @@ class IniciativaController extends Controller
             Log::error('Error updating iniciativa: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao atualizar iniciativa.', 500);
+            return response()->json('Falha ao atualizar iniciativa: '.$e->getMessage(), 500);
         }
     }
 

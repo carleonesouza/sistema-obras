@@ -84,7 +84,7 @@ class SetorController extends Controller
             Log::error('Error updating user: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao Atualizar Setor.', 500);
+            return response()->json('Falha ao Atualizar Setor: '.$e->getMessage(), 500);
         }
     }
 

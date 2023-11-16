@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\EmpreendimentoController;
 use App\Http\Controllers\Api\V1\IniciativaController;
 use App\Http\Controllers\Api\V1\SetorController;
 use App\Http\Controllers\Api\V1\TipoUsuarioController;
@@ -29,6 +30,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::apiResource('/usuarios', UserController::class);
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/iniciativas', IniciativaController::class);
+    Route::apiResource('/empreendimentos', EmpreendimentoController::class);
     
 });
 
