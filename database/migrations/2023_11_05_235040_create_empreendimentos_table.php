@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('nome');
             $table->string('responsavel');
             $table->string('respondente');
-            $table->foreignId('setor')->references('id')->on('setors');       
+            $table->string('obras')->nullable();
+            $table->foreignId('setor')->references('id')->on('setors'); 
+            $table->foreignId('user')->references('id')->on('users');     
+            $table->boolean('status')->default(true); 
             $table->timestamps();
         });
     }

@@ -21,7 +21,7 @@ class EmpreendimentoController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Empreendimentos']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Empreendimentos']);
         return EmpreendimentoResource::collection(Empreendimento::all());
     }
 
@@ -33,7 +33,7 @@ class EmpreendimentoController extends Controller
      */
     public function store(StoreEmpreendimentoRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Empreendimento']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Empreendimento']);
         $empreendimento = Empreendimento::create($request->validated());
         return EmpreendimentoResource::make($empreendimento);
     }
@@ -46,9 +46,9 @@ class EmpreendimentoController extends Controller
      */
     public function show($id)
     {
-        $empreendimento = Empreendimento::with('obras')->findOrFail($id);
+        $empreendimento = Empreendimento::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Empreendimento pelo ID']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
 
         if (!$empreendimento) {
             return response()->json('Empreendimento não Encontrada', 404);
@@ -66,7 +66,7 @@ class EmpreendimentoController extends Controller
     public function update(UpdateEmpreendimentoRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Empreendimento pelo ID']);
+            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Empreendimento pelo ID']);
 
         
             $$empreendimento = Empreendimento::find($request->id);
@@ -94,7 +94,7 @@ class EmpreendimentoController extends Controller
      */
     public function destroy(DeleteEmpreendimentoRequest $request, Empreendimento $empreendimento)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Empreendimento pelo ID']);
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Deletou' => 'Empreendimento pelo ID']);
          // Attempt to find the empreendimento by ID.
          $empreendimento::where('id', $request->id)->delete();
     

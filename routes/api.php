@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\EmpreendimentoController;
 use App\Http\Controllers\Api\V1\IniciativaController;
+use App\Http\Controllers\Api\V1\ProdutoController;
 use App\Http\Controllers\Api\V1\SetorController;
+use App\Http\Controllers\Api\V1\TipoInfraestruturaController;
 use App\Http\Controllers\Api\V1\TipoUsuarioController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
@@ -31,6 +33,8 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/iniciativas', IniciativaController::class);
     Route::apiResource('/empreendimentos', EmpreendimentoController::class);
+    Route::apiResource('/produtos', ProdutoController::class);
+    Route::apiResource('/tipos-infra', TipoInfraestruturaController::class);
     
 });
 

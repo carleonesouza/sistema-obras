@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class TipoInfraestrutura extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'descricao',
+        'setor_id',
+    ];
+
+
+    public function setor() {
+        return $this->belongsTo(Setor::class, 'setor_id');
+    }
 }

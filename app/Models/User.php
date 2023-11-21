@@ -51,6 +51,10 @@ class User extends Authenticatable
         return $this->belongsTo(TipoUsuario::class, 'tipo_usuario_id');
     }
 
+    public function empreendimentos():HasMany{
+        
+        return $this->hasMany(Empreendimento::class);
+    }
 
     public function iniciativas(): HasMany
     {

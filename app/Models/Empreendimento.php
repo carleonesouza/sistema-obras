@@ -21,11 +21,20 @@ class Empreendimento extends Model
         'respondente',
         'setor',
         'obras',
+        'user',
         'status'
     ];
  
     public function obras(): MorphMany {
         return $this->morphMany(Obra::class, 'obraable');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user');
+    }
+    
+    public function setor() {
+        return $this->belongsTo(Setor::class, 'setor');
     }
 
 }

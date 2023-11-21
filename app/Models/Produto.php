@@ -5,15 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Endereco extends Model
+class Produto extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'logradouro',
-        'municipio',
-        'estado',
-        'longitude',
-        'latitude'
+        'descricao',
     ];
 }

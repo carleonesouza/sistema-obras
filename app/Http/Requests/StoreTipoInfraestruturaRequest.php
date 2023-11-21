@@ -13,7 +13,7 @@ class StoreTipoInfraestruturaRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class StoreTipoInfraestruturaRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'descricao' => ['required', 'string', 'max:200'],
+            'setor_id' => ['required'],
         ];
     }
 }

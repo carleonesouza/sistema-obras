@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Empreendimento;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EmpreendimentoResource extends JsonResource
@@ -19,8 +20,10 @@ class EmpreendimentoResource extends JsonResource
             'nome' => $this->nome,
             'responsavel' => $this->responsavel,
             'respondente' => $this->respondente,
-            'setor' => SetorResource::where('setor', $this->setor)->with('setor')->first(),      
-            'obras' => ObraResource::collection($this->whenLoaded('obras')),
+            'setor' => Empreendimento::where('setor', $this->setor)->with('setor')->first(),   
+            'status' => $this->status
+            //'obras' => ObraResource::collection($this->whenLoaded('obras')),
+            //'user' => UserResource::where('user', $this->user)->with('user')->first(),
         ];
     }
 }
