@@ -12,7 +12,7 @@ class Endereco extends Model
     protected $fillable = [
         'logradouro',
         'municipio',
-        'estado',
+        'UF',
         'longitude',
         'latitude'
     ];

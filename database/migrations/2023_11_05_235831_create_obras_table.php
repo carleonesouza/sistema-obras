@@ -46,7 +46,7 @@ return new class extends Migration
             //Obra Portuária
             $table->string('tipoEmbarcacao')->nullable();  
             $table->string('ampliacaoCapacidade')->nullable();  
-            $table->foreignId('produto')->references('id')->on('produtos');
+            $table->foreignId('produto')->references('id')->on('produtos')->nullable();
             $table->float('novoCalado')->nullable();    
             $table->float('capacidadeDinamica')->nullable();
             //Obra Hidroviária

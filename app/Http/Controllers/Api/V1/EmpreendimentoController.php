@@ -46,7 +46,7 @@ class EmpreendimentoController extends Controller
      */
     public function show($id)
     {
-        $empreendimento = Empreendimento::find($id);
+        $empreendimento = Empreendimento::with('user')->find($id);
 
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
 

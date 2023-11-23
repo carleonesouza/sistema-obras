@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\EmpreendimentoController;
 use App\Http\Controllers\Api\V1\IniciativaController;
+use App\Http\Controllers\Api\V1\ObraController;
 use App\Http\Controllers\Api\V1\ProdutoController;
 use App\Http\Controllers\Api\V1\SetorController;
 use App\Http\Controllers\Api\V1\TipoInfraestruturaController;
@@ -35,6 +36,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::apiResource('/empreendimentos', EmpreendimentoController::class);
     Route::apiResource('/produtos', ProdutoController::class);
     Route::apiResource('/tipos-infra', TipoInfraestruturaController::class);
+    Route::apiResource('/obras', ObraController::class);
     
 });
 

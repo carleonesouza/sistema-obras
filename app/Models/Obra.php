@@ -10,7 +10,6 @@ class Obra extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome',
         'empreendimento',
         'tipo',
         'tipo_infraestrutura',
