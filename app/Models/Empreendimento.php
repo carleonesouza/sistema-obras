@@ -18,9 +18,9 @@ class Empreendimento extends Model
     protected $fillable = [
         'nome',
         'responsavel',
-        'respondente',
         'setor',
         'obras',
+        'usuario_que_alterou',
         'user',
         'status'
     ];

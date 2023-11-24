@@ -17,11 +17,15 @@ return new class extends Migration
             $table->id();
             $table->string('nome');
             $table->string('responsavel');
-            $table->string('respondente');
             $table->string('obras')->nullable();
-            $table->foreignId('setor')->references('id')->on('setors'); 
             $table->foreignId('user')->references('id')->on('users');     
-            $table->boolean('status')->default(true); 
+            $table->unsignedBigInteger('status')->nullable();
+            $table->foreign('status')->references('id')->on('statuses');
+            $table->unsignedBigInteger('setor')->nullable();
+            $table->foreign('setor')->references('id')->on('setors');
+            $table->unsignedBigInteger('usuario_que_alterou')->nullable();
+            $table->foreign('usuario_que_alterou')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

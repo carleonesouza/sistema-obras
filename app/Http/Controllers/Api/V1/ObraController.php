@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Obra;
-use App\Http\Requests\StoreObraRequest;
-use App\Http\Requests\UpdateObraRequest;
+use App\Http\Requests\Obra\StoreObraRequest;
+use App\Http\Requests\Obra\UpdateObraRequest;
 use App\Http\Resources\ObraResource;
-use App\Models\Endereco;
+use App\Models\Obra;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +36,6 @@ class ObraController extends Controller
     public function store(StoreObraRequest $request)
     {
        
-
         try {
             // echo "<pre>";
 
@@ -54,14 +52,10 @@ class ObraController extends Controller
             //$local = $this->fileUpload($request);
             //$request['documentosAdicionais'] = $local;
 
-            $endereco = json_decode($request->input('endereco'), true);
-
-            // Assuming $request['endereco'] contains all data for Endereco
-            $ende = Endereco::create($endereco);
+          
 
             // Add the endereco_id to the request data for Obra
             $obraData = $request->all();
-            $obraData['endereco'] = $ende->id;
 
             $obra = Obra::create($obraData);
 
@@ -96,26 +90,33 @@ class ObraController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Obra  $obra
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Obra $obra)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateObraRequest  $request
      * @param  \App\Models\Obra  $obra
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateObraRequest $request, Obra $obra)
+    public function update(UpdateObraRequest $request)
     {
-        //
+        try {
+            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Obra pelo ID']);
+
+        
+            $$obra = Obra::find($request->id);
+
+            if($obra){
+                $$obra->update($request->all());
+                return ObraResource::make($iniciativa);
+            }
+           
+           
+        } catch (Exception $e) {
+            // Log the exception for Obra purposes.
+            Log::error('Error updating Obra: ' . $e->getMessage());
+    
+            // Return an error response or handle the error as needed.
+            return response()->json('Falha ao atualizar Obra: '.$e->getMessage(), 500);
+        }
     }
 
     /**
@@ -142,10 +143,11 @@ class ObraController extends Controller
             $file = $request->file('file');
 
             // Create a unique file name
-            $fileName = time() . '_' . $file->getClientOriginalName();
+            //$fileName = time() . '_' . $file->getClientOriginalName();
 
             // Store the file in the 'uploads' directory within the 'public' disk
-            $path = $file->storeAs('uploads', $fileName, 'public');
+            $path = $file->storeAs('uploads', 'teste', 'public');
+            //$path = $request->file('avatar')->store('avatars');
 
             // Return the path
             return $path;

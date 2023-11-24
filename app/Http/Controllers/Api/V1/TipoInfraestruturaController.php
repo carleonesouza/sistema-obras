@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\TipoInfraestrutura;
-use App\Http\Requests\StoreTipoInfraestruturaRequest;
-use App\Http\Requests\UpdateTipoInfraestruturaRequest;
+use App\Http\Requests\TipoInfraestrutura\StoreTipoInfraestruturaRequest;
+use App\Http\Requests\TipoInfraestrutura\UpdateTipoInfraestruturaRequest;
 use App\Http\Resources\TipoInfraestruturaResource;
+use App\Models\TipoInfraestrutura;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;

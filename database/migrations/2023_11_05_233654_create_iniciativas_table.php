@@ -19,11 +19,15 @@ return new class extends Migration
             $table->string('responsavel');
             $table->string('ele_principal_afetado');
             $table->string('expectativa');
-            $table->boolean('status')->default(true);
             $table->string('instrumento');
-            $table->foreignId('setor')->references('id')->on('setors');
             $table->foreignId('usuario')->references('id')->on('users');
-            $table->string('usuario_alteracao')->nullable();
+            $table->unsignedBigInteger('status')->nullable();
+            $table->foreign('status')->references('id')->on('statuses');
+            $table->unsignedBigInteger('setor')->nullable();
+            $table->foreign('setor')->references('id')->on('setors');
+            $table->unsignedBigInteger('usuario_que_alterou')->nullable();
+            $table->foreign('usuario_que_alterou')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

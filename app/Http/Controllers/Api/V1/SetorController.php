@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DeleteUserRequest;
+use App\Http\Requests\Setors\StoreSetorRequest;
 use App\Http\Requests\Setors\UpdateSetorRequest;
+use App\Http\Requests\Users\DeleteUserRequest;
+use App\Http\Resources\SetorResource;
 use App\Models\Setor;
 use Exception;
-use App\Http\Requests\StoreSetorRequest;
-use App\Http\Resources\SetorResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;

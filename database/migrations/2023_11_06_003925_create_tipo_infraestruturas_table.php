@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('tipo_infraestruturas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('setor_id')->references('id')->on('setors');
+            $table->unsignedBigInteger('setor_id')->nullable();
+            $table->foreign('setor_id')->references('id')->on('setors');
             $table->string('descricao');
             $table->timestamps();
         });

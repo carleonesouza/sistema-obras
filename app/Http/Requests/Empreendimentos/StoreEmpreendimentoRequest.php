@@ -26,7 +26,6 @@ class StoreEmpreendimentoRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:200'],
             'responsavel' => ['required', 'string', 'max:200'],
-            'respondente'=> ['required', 'string', 'max:200'],
             'setor'=>['required'],
             'status'=> ['required'],
             'user' => ['required'],       

@@ -20,14 +20,20 @@ class Obra extends Model
         'dataConclusao',
         'documentosAdicionais',
         'arquivoGeorreferenciado',
-        'endereco',
+        'municipio',
+        'UF',
+        'sim_nao',
+        'longitude',
+        'latitude',
         'valorGlobal',
         'percentualFinanceiroExecutado',
         'situacaoAeroporto',
         'codigoIATA',
         'tipoAviaoRecICAO',
         'extensao',
+        'usuario_que_alterou',
         'novaLargura',
+        'user',
         'novaAreaCriada',
         'rodovia',
         'kmInicial',
@@ -56,6 +62,9 @@ class Obra extends Model
         'codigoOrigem',
         'codigoDestino',
         'nomeXRL', 
+        'funcao_estrutura',
+        'nivel_duto',
+        'tipo_duto',
         'espessura',
         'vazaoProjeto',
         'vazaoOperacional',
@@ -71,11 +80,43 @@ class Obra extends Model
         return $this->belongsTo(TipoInfraestrutura::class, 'tipo_infraestrutura');
     }
 
-    public function endereco() {
-        return $this->belongsTo(Endereco::class, 'endereco');
+    public function UF() {
+        return $this->belongsTo(UF::class, 'uf');
     }
 
     public function produto() {
         return $this->belongsTo(Produto::class, 'produto');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user');
+    }
+
+    public function funcao_estrutura() {
+        return $this->belongsTo(FuncaoEstrutura::class, 'funcao_estrutura');
+    }
+
+    public function intervencao() {
+        return $this->belongsTo(Intervencao::class, 'intervencao');
+    }
+
+    public function status() {
+        return $this->belongsTo(Status::class, 'status');
+    }
+
+    public function situacao() {
+        return $this->belongsTo(Situacao::class, 'situacao');
+    }
+
+    public function sim_nao() {
+        return $this->belongsTo(SimNao::class, 'sim_nao');
+    }
+
+    public function tipo_duto() {
+        return $this->belongsTo(TipoDuto::class, 'tipo_duto');
+    }
+
+    public function nivel_duto() {
+        return $this->belongsTo(NivelDuto::class, 'nivel_duto');
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\TipoUsuario;
-use App\Http\Requests\StoreTipoUsuarioRequest;
-use App\Http\Requests\UpdateTipoUsuarioRequest;
+use App\Http\Requests\TipoUsuario\StoreTipoUsuarioRequest;
+use App\Http\Requests\TipoUsuario\UpdateTipoUsuarioRequest;
 use App\Http\Resources\TipoUsuarioResource;
+use App\Models\TipoUsuario;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 

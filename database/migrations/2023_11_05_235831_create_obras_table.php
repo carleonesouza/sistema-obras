@@ -18,20 +18,54 @@ return new class extends Migration
             $table->foreignId('empreendimento')->references('id')->on('empreendimentos');
             $table->string('tipo');
             $table->foreignId('tipo_infraestrutura')->references('id')->on('tipo_infraestruturas');
+            $table->foreignId('user')->references('id')->on('users'); 
+
+            $table->foreignId('uf')->references('id')->on('ufs');
             $table->string('descricao')->nullable();
-            $table->string('intervencao')->nullable();
-            $table->boolean('status')->default(true);
+
+        
+            $table->unsignedBigInteger('intervencao')->nullable();
+            $table->foreign('intervencao')->references('id')->on('intervencoes');
+
+            $table->unsignedBigInteger('status')->nullable();
+            $table->foreign('status')->references('id')->on('statuses');
+
+            $table->unsignedBigInteger('situacao')->nullable();
+            $table->foreign('situacao')->references('id')->on('situacoes');
+
+            $table->unsignedBigInteger('sim_nao')->nullable();
+            $table->foreign('sim_nao')->references('id')->on('sim_naos');
+
+            $table->unsignedBigInteger('tipo_duto')->nullable();
+            $table->foreign('tipo_duto')->references('id')->on('tipo_dutos');
+
+            $table->unsignedBigInteger('funcao_estrutura')->nullable();
+            $table->foreign('funcao_estrutura')->references('id')->on('funcao_estruturas');
+
+            $table->unsignedBigInteger('nivel_duto')->nullable();
+            $table->foreign('nivel_duto')->references('id')->on('nivel_dutos');
+
+            $table->unsignedBigInteger('produto')->nullable();
+            $table->foreign('produto')->references('id')->on('produtos');
+
+            $table->unsignedBigInteger('usuario_que_alterou')->nullable();
+            $table->foreign('usuario_que_alterou')->references('id')->on('users');
+
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->string('municipio')->nullable();
+
+            $table->date('data_base_orcamento')->nullable();
             $table->string('instrumento')->nullable();
-            $table->string('respondente')->nullable();
             $table->date('dataInicio');
             $table->date('dataConclusao');
             $table->string('documentosAdicionais')->nullable();
             $table->string('arquivoGeorreferenciado')->nullable();
             $table->float('valorGlobal')->nullable();
             $table->float('percentualFinanceiroExecutado')->nullable();
-            $table->foreignId('endereco')->references('id')->on('enderecos');
+          
             //Obra Aeroportuária
-            $table->string('situacaoAeroporto')->nullable();
+           
             $table->string('codigoIATA')->nullable();
             $table->string('tipoAviaoRecICAO')->nullable();
             $table->float('extensao')->nullable();
@@ -46,7 +80,9 @@ return new class extends Migration
             //Obra Portuária
             $table->string('tipoEmbarcacao')->nullable();  
             $table->string('ampliacaoCapacidade')->nullable();  
-            $table->foreignId('produto')->references('id')->on('produtos')->nullable();
+
+           
+
             $table->float('novoCalado')->nullable();    
             $table->float('capacidadeDinamica')->nullable();
             //Obra Hidroviária

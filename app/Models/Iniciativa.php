@@ -18,6 +18,7 @@ class Iniciativa extends Model
         'expectativa',
         'status',
         'instrumento',
+        'usuario_que_alterou',
         'setor',
         'usuario',
         'usuario_alteracao'

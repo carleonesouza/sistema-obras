@@ -71,7 +71,7 @@ class EmpreendimentoController extends Controller
         
             $$empreendimento = Empreendimento::find($request->id);
 
-            if($$empreendimento){
+            if($empreendimento){
                 $$empreendimento->update($request->all());
                 return EmpreendimentoResource::make($iniciativa);
             }
