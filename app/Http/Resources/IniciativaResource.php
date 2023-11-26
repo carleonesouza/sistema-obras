@@ -24,8 +24,8 @@ class IniciativaResource extends JsonResource
             'instrumento' => $this->instrumento,
             'setor' => Iniciativa::where('setor', $this->setor)->with('setor')->first(),
             'usuario' => Iniciativa::where('usuario', $this->usuario)->with('usuario')->first(),
-            'usuario_alteracao' => $this->usuario_alteracao,
-            'status' => $this->status
+            'usuario_que_alterou' => Iniciativa::where('usuario_que_alterou', $this->usuario_que_alterou)->with('usuario')->first()  ,
+            'status' => Iniciativa::where('status', $this->status)->with('status')->first()
         ];
     }
 }

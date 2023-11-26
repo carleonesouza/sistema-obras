@@ -34,4 +34,9 @@ class Iniciativa extends Model
         return $this->belongsTo(User::class, 'usuario');
     }
 
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class, 'status');
+    }
+
 }

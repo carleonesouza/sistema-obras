@@ -19,8 +19,7 @@ return new class extends Migration
             $table->string('responsavel');
             $table->string('obras')->nullable();
             $table->foreignId('user')->references('id')->on('users');     
-            $table->unsignedBigInteger('status')->nullable();
-            $table->foreign('status')->references('id')->on('statuses');
+            $table->boolean('status')->default(true);
             $table->unsignedBigInteger('setor')->nullable();
             $table->foreign('setor')->references('id')->on('setors');
             $table->unsignedBigInteger('usuario_que_alterou')->nullable();

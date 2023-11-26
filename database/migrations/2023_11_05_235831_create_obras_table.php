@@ -25,13 +25,13 @@ return new class extends Migration
 
         
             $table->unsignedBigInteger('intervencao')->nullable();
-            $table->foreign('intervencao')->references('id')->on('intervencoes');
+            $table->foreign('intervencao')->references('id')->on('intervencaos');
 
             $table->unsignedBigInteger('status')->nullable();
             $table->foreign('status')->references('id')->on('statuses');
 
             $table->unsignedBigInteger('situacao')->nullable();
-            $table->foreign('situacao')->references('id')->on('situacoes');
+            $table->foreign('situacao')->references('id')->on('situacaos');
 
             $table->unsignedBigInteger('sim_nao')->nullable();
             $table->foreign('sim_nao')->references('id')->on('sim_naos');
@@ -65,7 +65,6 @@ return new class extends Migration
             $table->float('percentualFinanceiroExecutado')->nullable();
           
             //Obra Aeroportuária
-           
             $table->string('codigoIATA')->nullable();
             $table->string('tipoAviaoRecICAO')->nullable();
             $table->float('extensao')->nullable();
@@ -80,9 +79,6 @@ return new class extends Migration
             //Obra Portuária
             $table->string('tipoEmbarcacao')->nullable();  
             $table->string('ampliacaoCapacidade')->nullable();  
-
-           
-
             $table->float('novoCalado')->nullable();    
             $table->float('capacidadeDinamica')->nullable();
             //Obra Hidroviária
@@ -97,11 +93,8 @@ return new class extends Migration
             //Obra Ferroviária
             $table->float('novaBitola')->nullable();
             $table->float('novaVelocidade')->nullable();
-            //Obra Dutoviária
-            $table->string('tipoDuto')->nullable();   
-            $table->string('funcaoEstrutura')->nullable();   
-            $table->string('materialTransportado')->nullable();   
-            $table->string('nivelDuto')->nullable();   
+            //Obra Dutoviária           
+            $table->string('materialTransportado')->nullable();    
             $table->string('codigoOrigem')->nullable();   
             $table->string('codigoDestino')->nullable();   
             $table->string('nomeXRL')->nullable();   

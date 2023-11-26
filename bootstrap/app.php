@@ -11,6 +11,9 @@
 |
 */
 
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );

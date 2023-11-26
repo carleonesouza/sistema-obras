@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TipoInfraestrutura\StoreTipoInfraestruturaRequest;
+use App\Http\Requests\StoreTipoInfraestruturaRequest;
 use App\Http\Requests\TipoInfraestrutura\UpdateTipoInfraestruturaRequest;
 use App\Http\Resources\TipoInfraestruturaResource;
 use App\Models\TipoInfraestrutura;
@@ -27,7 +27,7 @@ class TipoInfraestruturaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreTipoInfraestruturaRequest  $request
+     * @param  \App\Http\Requests\TipoInfraestrutura $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreTipoInfraestruturaRequest $request)
@@ -38,6 +38,7 @@ class TipoInfraestruturaController extends Controller
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Tipo Infraestrutura']);
             $tipoInfra = TipoInfraestrutura::create($request->validated());
             return TipoInfraestruturaResource::make($tipoInfra);
+
         } catch (Exception $e) {
             // Log the exception for debugging purposes.
             Log::error('Error creating Tipo Infraestrutura: ' . $e->getMessage());

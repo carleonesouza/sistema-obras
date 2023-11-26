@@ -27,11 +27,11 @@ class StoreIniciativaRequest extends FormRequest
             'nome' => ['required', 'string', 'max:200'],
             'responsavel' => ['required', 'string', 'max:200'],
             'ele_principal_afetado'=> ['required', 'string', 'max:200'],
-            'expectativa'=> ['required', 'string', 'max:200'],
-            'status'=> ['required'],
+            'expectativa'=> ['required', 'string', 'max:200'],          
             'instrumento' => ['required','string', 'max:200'],
             'setor'=>['required'],
-            'usuario' =>['required']
+            'usuario' =>['required'],
+            'status'=> ['required']
         ];
     }
 }

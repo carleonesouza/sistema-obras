@@ -2,13 +2,21 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\EmpreendimentoController;
+use App\Http\Controllers\Api\V1\FuncaoEstruturaController;
 use App\Http\Controllers\Api\V1\IniciativaController;
+use App\Http\Controllers\Api\V1\IntervencaoController;
+use App\Http\Controllers\Api\V1\NivelDutoController;
 use App\Http\Controllers\Api\V1\ObraController;
 use App\Http\Controllers\Api\V1\ProdutoController;
 use App\Http\Controllers\Api\V1\SetorController;
+use App\Http\Controllers\Api\V1\SimNaoController;
+use App\Http\Controllers\Api\V1\SituacaoController;
+use App\Http\Controllers\Api\V1\StatusController;
+use App\Http\Controllers\Api\V1\TipoDutoController;
 use App\Http\Controllers\Api\V1\TipoInfraestruturaController;
 use App\Http\Controllers\Api\V1\TipoUsuarioController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\UFController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +45,15 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::apiResource('/produtos', ProdutoController::class);
     Route::apiResource('/tipos-infra', TipoInfraestruturaController::class);
     Route::apiResource('/obras', ObraController::class);
+    Route::apiResource('/status', StatusController::class);
+    Route::apiResource('/estados', UFController::class);
+    Route::apiResource('/tipo-infras', TipoInfraestruturaController::class);
+    Route::apiResource('/intervencoes', IntervencaoController::class);
+    Route::apiResource('/situacoes', SituacaoController::class);
+    Route::apiResource('/simnao', SimNaoController::class);
+    Route::apiResource('/tipo-dutos', TipoDutoController::class);
+    Route::apiResource('/funcao-estruturas', FuncaoEstruturaController::class);
+    Route::apiResource('/nivel-dutos', NivelDutoController::class);
     
 });
 

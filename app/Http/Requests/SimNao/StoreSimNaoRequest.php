@@ -24,7 +24,7 @@ class StoreSimNaoRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'descricao' => ['required', 'string', 'max:200'],
         ];
     }
 }
