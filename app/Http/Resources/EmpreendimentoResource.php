@@ -25,8 +25,8 @@ class EmpreendimentoResource extends JsonResource
             'respondente' => $this->respondente,
             'setor' => Empreendimento::where('id', '=',$this->setor)->with('setor')->first(),   
             'status' => $this->status,
-            'obras' => ObraResource::collection(Obra::all()),
-            'user' => User::where('id', '=', $this->user)->get(),
+            'obras' => ObraResource::collection(Obra::where('empreendimento',  $this->id)->with('empreendimento')->get()),
+            'user' =>  Empreendimento::where('id', '=',$this->user)->with('user')->first(),    
         ];
     }
 }

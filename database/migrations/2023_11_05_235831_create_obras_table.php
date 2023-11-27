@@ -15,14 +15,17 @@ return new class extends Migration
     {
         Schema::create('obras', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empreendimento')->references('id')->on('empreendimentos');
+            
             $table->string('tipo');
-            $table->foreignId('tipo_infraestrutura')->references('id')->on('tipo_infraestruturas');
+            $table->string('descricao')->nullable();
+            
             $table->foreignId('user')->references('id')->on('users'); 
 
-            $table->foreignId('uf')->references('id')->on('ufs');
-            $table->string('descricao')->nullable();
+            $table->foreignId('uf')->references('id')->on('u_f_s');
+          
+            $table->foreignId('tipo_infraestrutura')->references('id')->on('tipo_infraestruturas');
 
+            $table->foreignId('empreendimento')->references('id')->on('empreendimentos');
         
             $table->unsignedBigInteger('intervencao')->nullable();
             $table->foreign('intervencao')->references('id')->on('intervencaos');
