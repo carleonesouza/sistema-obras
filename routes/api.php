@@ -34,11 +34,10 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
 
 // Protected routes for ADMIN
 Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
-  
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
     Route::apiResource('/usuarios', UserController::class);
     Route::apiResource('/setores', SetorController::class);
@@ -61,7 +60,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
 
 // Protected routes for others
 Route::group(['middleware' => ['auth:sanctum']], function () {
-  
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/iniciativas', IniciativaController::class);
     Route::apiResource('/empreendimentos', EmpreendimentoController::class);
