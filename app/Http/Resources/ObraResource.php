@@ -62,6 +62,7 @@ class ObraResource extends JsonResource
                 'versao' => $this->versao,
                 'novoCalado' => $this->novoCalado,
                 'capacidadeDinamica' => $this->capacidadeDinamica,
+                'materialTransportado' => $this->materialTransportado,
                 'novaVelocidade' => $this->novaVelocidade,
                 'novaBitola' => $this->novaBitola,
                 'situacao' => Obra::where('situacao', $this->situacao)->with('situacao')->first(),   

@@ -38,9 +38,9 @@ class AuthController extends Controller
 
     }
 
-    public function logout()
+    public function logout(LoginRequest $request)
     {
-        $user = request()->user();
+        $user = $request()->user();
         $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
 
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Logout']);
