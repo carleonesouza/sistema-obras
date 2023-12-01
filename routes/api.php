@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CommonUserController;
 use App\Http\Controllers\Api\V1\EmpreendimentoController;
 use App\Http\Controllers\Api\V1\FuncaoEstruturaController;
 use App\Http\Controllers\Api\V1\HandleUploadController;
@@ -38,9 +39,9 @@ Route::post('/login', [AuthController::class, 'login']);
 // Protected routes for ADMIN
 Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
     Route::apiResource('/usuarios', UserController::class);
     Route::apiResource('/setores', SetorController::class);
+    Route::apiResource('/common-users', CommonUserController::class);
     Route::apiResource('/iniciativas', IniciativaController::class);
     Route::apiResource('/empreendimentos', EmpreendimentoController::class);
     Route::apiResource('/produtos', ProdutoController::class);
@@ -61,6 +62,8 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
 // Protected routes for others
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::apiResource('/common-users', CommonUserController::class);
+    Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/iniciativas', IniciativaController::class);
     Route::apiResource('/empreendimentos', EmpreendimentoController::class);

@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\File;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class ObraController extends Controller
@@ -102,13 +103,16 @@ class ObraController extends Controller
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Obra pelo ID']);
 
         
-            $$obra = Obra::find($request->id);
+            $obra = Obra::find($request->id);
 
             if($obra){
-                $$obra->update($request->all());
-                return ObraResource::make($iniciativa);
+                $data = $request->all();
+                    // Remove 'id' from the data array
+                $data = Arr::except($data, ['id']);
+                $obra->update($data);
+               
             }
-           
+            return ObraResource::make($obra);
            
         } catch (Exception $e) {
             // Log the exception for Obra purposes.
@@ -130,30 +134,4 @@ class ObraController extends Controller
         //
     }
 
-    public function fileUpload($request)
-    {
-        // Validate the file
-        // $validatedData = $request->validate([
-        //     'file' => 'required|mimes:csv,txt,xlx,xls,pdf|max:2048'
-        // ]);
-
-        // Check if the file is present in the request
-        if ($request->hasFile('file')) {
-            // Get the file from the request
-            $file = $request->file('file');
-
-            // Create a unique file name
-            //$fileName = time() . '_' . $file->getClientOriginalName();
-
-            // Store the file in the 'uploads' directory within the 'public' disk
-            $path = $file->storeAs('uploads', 'teste', 'public');
-            //$path = $request->file('avatar')->store('avatars');
-
-            // Return the path
-            return $path;
-        }
-
-        // Handle the case where no file is present
-        return 'No file provided';
-    }
 }

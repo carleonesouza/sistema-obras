@@ -62,7 +62,7 @@ class UserController extends Controller
         $user = User::find($userId);
     
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['User not found'], 404);
         }
     
         return UserResource::make($user);
@@ -79,6 +79,8 @@ class UserController extends Controller
     {
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID']);
+
+            
             
             $user = User::find($request->id);
 
@@ -94,7 +96,7 @@ class UserController extends Controller
             Log::error('Error updating user: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json(['message' => 'Falha ao Atualizar usuário: '.$e->getMessage()], 500);
+            return response()->json(['Falha ao Atualizar usuário: '.$e->getMessage()], 500);
         }
     }  
 
@@ -113,7 +115,7 @@ class UserController extends Controller
     
         if (!$user) {
             // User with the specified ID was not found.
-            return response()->json(['message' => 'Usuario não encontrado!'], 404);
+            return response()->json(['Usuario não encontrado!'], 404);
         }
     
       
