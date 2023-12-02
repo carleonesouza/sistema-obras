@@ -22,7 +22,17 @@ class EmpreendimentoController extends Controller
     public function index()
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Empreendimentos']);
-        return EmpreendimentoResource::collection(Empreendimento::all());
+
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+
+            $empreendimentos = Empreendimento::all();
+        } else {
+            $empreendimentos = Empreendimento::where('user', $user->id)->get();
+        }
+
+        return EmpreendimentoResource::collection($empreendimentos);
     }
 
     /**
@@ -48,14 +58,21 @@ class EmpreendimentoController extends Controller
     {
         $empreendimento = Empreendimento::with('user')->find($id);
 
+        $user = Auth::user();
+
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
 
         if (!$empreendimento) {
             return response()->json('Empreendimento não Encontrada', 404);
         }
+
+        if ($user->hasRole('ADMIN') && $empreendimento->user != Auth::id()) {
+            return response()->json('Não autorizado', 403);
+        }
+
         return new EmpreendimentoResource($empreendimento);
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -68,21 +85,27 @@ class EmpreendimentoController extends Controller
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Empreendimento pelo ID']);
 
-        
-            $$empreendimento = Empreendimento::find($request->id);
+            $user = Auth::user();
 
-            if($empreendimento){
-                $$empreendimento->update($request->all());
-                return EmpreendimentoResource::make($iniciativa);
+            if ($user->hasRole('ADMIN')) {
+                $empreendimento = Empreendimento::find($request->id);
+            } else {
+
+                $empreendimento = Empreendimento::where('user', $user->id)->get();
             }
-           
-           
+
+            if ($empreendimento) {
+
+                $empreendimento->update($request->all());
+
+                return EmpreendimentoResource::make($empreendimento);
+            }
         } catch (Exception $e) {
             // Log the exception for debugging purposes.
             Log::error('Error updating Empreendimento: ' . $e->getMessage());
-    
+
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao atualizar Empreendimento: '.$e->getMessage(), 500);
+            return response()->json('Falha ao atualizar Empreendimento: ' . $e->getMessage(), 500);
         }
     }
 
@@ -95,14 +118,14 @@ class EmpreendimentoController extends Controller
     public function destroy(DeleteEmpreendimentoRequest $request, Empreendimento $empreendimento)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Deletou' => 'Empreendimento pelo ID']);
-         // Attempt to find the empreendimento by ID.
-         $empreendimento::where('id', $request->id)->delete();
-    
-         if (!$empreendimento) {
-             // Empreendimento with the specified ID was not found.
-             return response()->json('Empreendimento não encontrada!', 404);
-         }
-         
-         return response()->noContent();
+        // Attempt to find the empreendimento by ID.
+        $empreendimento::where('id', $request->id)->delete();
+
+        if (!$empreendimento) {
+            // Empreendimento with the specified ID was not found.
+            return response()->json('Empreendimento não encontrada!', 404);
+        }
+
+        return response()->noContent();
     }
 }

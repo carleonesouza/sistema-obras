@@ -65,7 +65,7 @@ class ObraPolicy
      */
     public function delete(User $user, Obra $obra)
     {
-        //
+        return $user->role === 'ADMIN' || $user->id === $obra->user;
     }
 
     /**

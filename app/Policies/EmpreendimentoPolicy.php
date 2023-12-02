@@ -65,7 +65,7 @@ class EmpreendimentoPolicy
      */
     public function delete(User $user, Empreendimento $empreendimento)
     {
-        //
+        return $user->role === 'ADMIN' || $user->id === $empreendimento->user;
     }
 
     /**

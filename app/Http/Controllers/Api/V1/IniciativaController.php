@@ -22,7 +22,19 @@ class IniciativaController extends Controller
     public function index()
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Iniciativa']);
-        return IniciativaResource::collection(Iniciativa::all());
+
+
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+
+            $iniciativas = Iniciativa::all();
+        } else {
+
+            $iniciativas = Iniciativa::where('usuario', $user->id)->get();
+        }
+
+        return IniciativaResource::collection($iniciativas);
     }
 
     /**
@@ -34,7 +46,9 @@ class IniciativaController extends Controller
     public function store(StoreIniciativaRequest $request)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Iniciativa']);
+
         $iniciativa = Iniciativa::create($request->validated());
+        
         return IniciativaResource::make($iniciativa);
     }
 
@@ -48,12 +62,20 @@ class IniciativaController extends Controller
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Iniciativa pelo ID']);
 
+        $user = Auth::user();
+
         $iniciativa = Iniciativa::find($id);
-    
+
         if (!$iniciativa) {
+
             return response()->json('Iniciativa não Encontrada', 404);
         }
-    
+
+        if ($user->hasRole('ADMIN') && $obra->user != Auth::id()) {
+
+            return response()->json('Não autorizado', 403);
+        }
+
         return IniciativaResource::make($iniciativa);
     }
 
@@ -69,21 +91,29 @@ class IniciativaController extends Controller
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Iniciativa pelo ID']);
 
-        
-            $iniciativa = Iniciativa::find($request->id);
 
-            if($iniciativa){
+            $user = Auth::user();
+
+            if ($user->hasRole('ADMIN')) {
+
+                $iniciativa = Iniciativa::find($request->id);
+            } else {
+
+                $iniciativa = Iniciativa::where('usuario', $user->id)->get();
+            }
+
+            if ($iniciativa) {
+
                 $iniciativa->update($request->all());
+
                 return IniciativaResource::make($iniciativa);
             }
-           
-           
         } catch (Exception $e) {
             // Log the exception for debugging purposes.
             Log::error('Error updating iniciativa: ' . $e->getMessage());
-    
+
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao atualizar iniciativa: '.$e->getMessage(), 500);
+            return response()->json('Falha ao atualizar iniciativa: ' . $e->getMessage(), 500);
         }
     }
 
@@ -96,14 +126,14 @@ class IniciativaController extends Controller
     public function destroy(DeleteIniciativaRequest $request, Iniciativa $iniciativa)
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Iniciativa pelo ID']);
-         // Attempt to find the user by ID.
-         $iniciativa::where('id', $request->id)->delete();
-    
-         if (!$iniciativa) {
-             // User with the specified ID was not found.
-             return response()->json('Iniciativa não encontrada!', 404);
-         }
-         
-         return response()->noContent();
+        // Attempt to find the user by ID.
+        $iniciativa::where('id', $request->id)->delete();
+
+        if (!$iniciativa) {
+            // User with the specified ID was not found.
+            return response()->json('Iniciativa não encontrada!', 404);
+        }
+
+        return response()->noContent();
     }
 }

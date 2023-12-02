@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Obra\DeleteObraRequest;
 use App\Http\Requests\Obra\StoreObraRequest;
 use App\Http\Requests\Obra\UpdateObraRequest;
 use App\Http\Resources\ObraResource;
@@ -24,7 +25,18 @@ class ObraController extends Controller
     public function index()
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Obra']);
-        return ObraResource::collection(Obra::all());
+
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+
+            $obras = Obra::all();
+        } else {
+
+            $obras = Obra::where('user', $user->id)->get();
+        }
+
+        return ObraResource::collection($obras);
     }
 
 
@@ -36,24 +48,14 @@ class ObraController extends Controller
      */
     public function store(StoreObraRequest $request)
     {
-       
-        try {
-            // echo "<pre>";
 
-            // $values = $request->all();
-            // //printf($keys);
-            // print_r($values);
-            // die;
+        try {
+
 
             Log::channel('user_activity')->info('User action', [
                 'user' => Auth::user()->email,
                 'Criou' => 'Obra'
             ]);
-
-            //$local = $this->fileUpload($request);
-            //$request['documentosAdicionais'] = $local;
-
-          
 
             // Add the endereco_id to the request data for Obra
             $obraData = $request->all();
@@ -83,8 +85,14 @@ class ObraController extends Controller
 
         $obra = Obra::find($id);
 
+        $user = Auth::user();
+
         if (!$obra) {
             return response()->json('Obra não Encontrada', 404);
+        }
+
+        if ($user->hasRole('ADMIN') && $obra->user != Auth::id()) {
+            return response()->json('Não autorizado', 403);
         }
 
         return ObraResource::make($obra);
@@ -102,24 +110,28 @@ class ObraController extends Controller
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Obra pelo ID']);
 
-        
-            $obra = Obra::find($request->id);
+            $user = Auth::user();
 
-            if($obra){
+            if ($user->hasRole('ADMIN')) {
+                $obra = Obra::find($request->id);
+            } else {
+
+                $obra = Obra::where('user', $user->id)->get();
+            }
+
+            if ($obra) {
                 $data = $request->all();
-                    // Remove 'id' from the data array
+                // Remove 'id' from the data array
                 $data = Arr::except($data, ['id']);
                 $obra->update($data);
-               
             }
             return ObraResource::make($obra);
-           
         } catch (Exception $e) {
             // Log the exception for Obra purposes.
             Log::error('Error updating Obra: ' . $e->getMessage());
-    
+
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao atualizar Obra: '.$e->getMessage(), 500);
+            return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
         }
     }
 
@@ -129,9 +141,17 @@ class ObraController extends Controller
      * @param  \App\Models\Obra  $obra
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Obra $obra)
+    public function destroy(DeleteObraRequest $request, Obra $obra)
     {
-        //
-    }
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Deletou' => 'Obra pelo ID']);
+        // Attempt to find the empreendimento by ID.
+        $obra::where('id', $request->id)->delete();
 
+        if (!$obra) {
+            // Empreendimento with the specified ID was not found.
+            return response()->json('Obra não encontrada!', 404);
+        }
+
+        return response()->noContent();
+    }
 }

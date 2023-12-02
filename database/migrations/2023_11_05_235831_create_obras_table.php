@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             
             $table->string('tipo');
-            $table->string('descricao')->nullable();
+            $table->string('descricao')->nullable()->unique();
             
             $table->foreignId('user')->references('id')->on('users'); 
 
@@ -25,12 +25,12 @@ return new class extends Migration
           
             $table->foreignId('tipo_infraestrutura')->references('id')->on('tipo_infraestruturas');
 
-            $table->foreignId('empreendimento')->references('id')->on('empreendimentos');
+            $table->foreignId('empreendimento')->references('id')->on('empreendimentos')->unique();
         
-            $table->unsignedBigInteger('intervencao')->nullable();
+            $table->unsignedBigInteger('intervencao')->nullable()->unique();
             $table->foreign('intervencao')->references('id')->on('intervencaos');
 
-            $table->unsignedBigInteger('status')->nullable();
+            $table->unsignedBigInteger('status')->nullable()->unique();
             $table->foreign('status')->references('id')->on('statuses');
 
             $table->unsignedBigInteger('situacao')->nullable();
