@@ -10,7 +10,7 @@ class Municipio extends Model
     use HasFactory;
 
     protected $fillable = [
-        'descricao',
+        'nome',
         'uf',
     ];
 

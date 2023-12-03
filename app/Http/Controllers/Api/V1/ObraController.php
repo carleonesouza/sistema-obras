@@ -7,9 +7,11 @@ use App\Http\Requests\Obra\DeleteObraRequest;
 use App\Http\Requests\Obra\StoreObraRequest;
 use App\Http\Requests\Obra\UpdateObraRequest;
 use App\Http\Resources\ObraResource;
+use App\Models\Municipio;
 use App\Models\Obra;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ObraController extends Controller
@@ -49,11 +51,15 @@ class ObraController extends Controller
      */
     public function store(StoreObraRequest $request)
     {
+        DB::beginTransaction();
+
         try {
             Log::channel('user_activity')->info('User action', [
                 'user' => Auth::user()->email,
                 'Criou' => 'Obra'
             ]);
+
+            
 
             // Create the Obra
             $obraData = $request->except('produtos'); // Exclude product_ids from Obra data
@@ -67,13 +73,23 @@ class ObraController extends Controller
             }
 
             if ($request->has('municipios')) {
-                $municipiosIds = $request->input('municipios');
-                $obra->municipios()->attach($municipiosIds);
+                $municipioData  = $request->input('municipios');
+                $municipio = Municipio::create($municipioData);
+
+                $municipioId = $municipio->id;
+
+               $obra->municipios()->attach($municipioId);
             }
 
+            DB::commit();
+
             return ObraResource::make($obra);
+             
         } catch (Exception $e) {
+            DB::rollBack();
+
             Log::error('Error creating Obra: ' . $e->getMessage());
+            
             return response()->json('Falha ao Criar Obra: ' . $e->getMessage(), 500);
         }
     }
