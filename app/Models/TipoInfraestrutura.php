@@ -11,11 +11,11 @@ class TipoInfraestrutura extends Model
 
     protected $fillable = [
         'descricao',
-        'setor_id',
+        'setor',
     ];
 
 
     public function setor() {
-        return $this->belongsTo(Setor::class, 'setor_id');
+        return $this->belongsTo(Setor::class, 'setor');
     }
 }

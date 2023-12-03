@@ -23,7 +23,7 @@ class AuthController extends Controller
 
             $user = User::where('email', $validated['email'])->first();
             if (!$user || !Hash::check($validated['senha'], $user->senha)) {
-                return response()->json(['message' => 'Credenciais invalidas !'], 401);
+                return response()->json(['message' => 'Credenciais inválidas !'], 401);
             }
             
             $user->load('tipoUsuario');
@@ -38,7 +38,7 @@ class AuthController extends Controller
 
         }catch (Exception $e) {
             Log::error('Error in Login: ' . $e->getMessage());
-            return response()->json('Credenciais inválidas: ' . $e->getMessage(), 401);
+            return response()->json(['message' =>'Credenciais inválidas: '] . $e->getMessage(), 401);
         }
       
     }

@@ -20,7 +20,7 @@ class Iniciativa extends Model
         'instrumento',
         'usuario_que_alterou',
         'setor',
-        'usuario',
+        'user',
         'usuario_alteracao'
     ];
 
@@ -29,9 +29,9 @@ class Iniciativa extends Model
         return $this->belongsTo(Setor::class, 'setor');
     }
 
-    public function usuario(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'usuario');
+        return $this->belongsTo(User::class, 'user');
     }
 
     public function status(): BelongsTo

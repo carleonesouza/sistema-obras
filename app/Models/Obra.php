@@ -14,13 +14,14 @@ class Obra extends Model
         'tipo',
         'tipo_infraestrutura',
         'descricao',
+        'responsavel',
         'intervencao',
         'instrumento',
         'dataInicio',
         'dataConclusao',
         'documentosAdicionais',
         'arquivoGeorreferenciado',
-        'municipio',
+        'municipios',
         'uf',
         'sim_nao',
         'longitude',
@@ -42,7 +43,7 @@ class Obra extends Model
         'versao',
         'tipoEmbarcacao',
         'ampliacaoCapacidade',
-        'produto',
+        'produtos',
         'novoCalado',
         'novoComprimento', 
         'capacidadeDinamica',
@@ -53,13 +54,14 @@ class Obra extends Model
         'profundidadeMaxima',
         'comboiosCheia',
         'comboiosEstiagem',
-        'novaBitola',
+        'bitola',
         'novaVelocidade',
         'tipoDuto',
         'funcaoEstrutura',
         'materialTransportado',
         'nivelDuto',
         'codigoOrigem',
+        'natureza_empreendimento',
         'codigoDestino',
         'data_base_orcamento',
         'nomeXRL', 
@@ -120,5 +122,23 @@ class Obra extends Model
 
     public function nivel_duto() {
         return $this->belongsTo(NivelDuto::class, 'nivel_duto');
+    }
+
+    public function natureza_empreendimento() {
+        return $this->belongsTo(NaturezaEmpreendimento::class, 'natureza_empreendimento');
+    }
+
+    public function bitola() {
+        return $this->belongsTo(Bitola::class, 'bitola');
+    }
+
+    public function produtos()
+    {
+        return $this->belongsToMany(Produto::class, 'obra_produto');
+    }
+
+    public function municipios()
+    {
+        return $this->belongsToMany(Municipio::class, 'obra_municipios');
     }
 }

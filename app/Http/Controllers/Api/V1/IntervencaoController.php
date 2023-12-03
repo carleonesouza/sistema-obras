@@ -39,10 +39,10 @@ class IntervencaoController extends Controller
             
         }catch (Exception $e) {
             // Log the exception for debugging purposes.
-            Log::error('Error updating Intervencao: ' . $e->getMessage());
+            Log::error('Error criar Intervencao: ' . $e->getMessage());
     
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao atualizar Intervencao: '.$e->getMessage(), 500);
+            return response()->json('Falha ao criar Intervencao: '.$e->getMessage(), 500);
         }
     }
 
@@ -85,5 +85,15 @@ class IntervencaoController extends Controller
     public function destroy(Intervencao $intervencao)
     {
         //
+    }
+
+    public function intervencaoBySetor($setor)
+    {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => ' Intervenções']);
+
+        $intervencoes = Intervencao::where('setor', $setor)->get();
+        
+        return IntervencaoResource::collection($intervencoes);
+
     }
 }

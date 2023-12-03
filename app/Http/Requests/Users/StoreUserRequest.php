@@ -29,7 +29,7 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'max:50'],
             'instituicao_setor'=> ['required', 'string', 'max:200'],
             'telefone'=> ['required', 'string', 'max:20'],
-            'tipo_usuario_id'=> ['required'],
+            'tipo_usuario'=> ['required'],
             'senha' => ['required', 'confirmed', Rules\Password::defaults()]
         ];
     }

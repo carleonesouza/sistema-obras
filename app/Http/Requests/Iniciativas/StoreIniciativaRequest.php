@@ -24,9 +24,9 @@ class StoreIniciativaRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => ['required', 'string', 'max:200'],
+            'nome' => ['required', 'string', 'max:500'],
             'responsavel' => ['required', 'string', 'max:200'],
-            'ele_principal_afetado'=> ['required', 'string', 'max:200'],
+            'descricao'=> ['required', 'string', 'max:800'],
             'expectativa'=> ['required', 'string', 'max:200'],          
             'instrumento' => ['required','string', 'max:200'],
             'setor'=>['required'],

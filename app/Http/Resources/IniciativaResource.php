@@ -19,12 +19,12 @@ class IniciativaResource extends JsonResource
             'id' => (string) $this->id,
             'nome' => $this->nome,
             'responsavel' => $this->responsavel,
-            'ele_principal_afetado' => $this->ele_principal_afetado,
+            'descricao' => $this->descricao,
             'expectativa' => $this->expectativa,
             'instrumento' => $this->instrumento,
             'setor' => Iniciativa::where('setor', $this->setor)->with('setor')->first(),
-            'usuario' => Iniciativa::where('usuario', $this->usuario)->with('usuario')->first(),
-            'usuario_que_alterou' => Iniciativa::where('usuario_que_alterou', $this->usuario_que_alterou)->with('usuario')->first()  ,
+            'user' => Iniciativa::where('user', $this->user)->with('user')->first(),
+            'usuario_que_alterou' => Iniciativa::where('usuario_que_alterou', $this->usuario_que_alterou)->with('user')->first()  ,
             'status' => Iniciativa::where('status', $this->status)->with('status')->first()
         ];
     }

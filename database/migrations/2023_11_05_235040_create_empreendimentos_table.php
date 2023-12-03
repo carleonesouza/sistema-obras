@@ -22,6 +22,9 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->unsignedBigInteger('setor')->nullable();
             $table->foreign('setor')->references('id')->on('setors');
+
+            $table->unsignedBigInteger('natureza_empreendimento')->nullable();
+            $table->foreign('natureza_empreendimento')->references('id')->on('natureza_empreendimentos');
             $table->unsignedBigInteger('usuario_que_alterou')->nullable();
             $table->foreign('usuario_que_alterou')->references('id')->on('users');
 

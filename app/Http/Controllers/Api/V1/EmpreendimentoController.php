@@ -58,16 +58,11 @@ class EmpreendimentoController extends Controller
     {
         $empreendimento = Empreendimento::with('user')->find($id);
 
-        $user = Auth::user();
 
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
 
         if (!$empreendimento) {
             return response()->json('Empreendimento não Encontrada', 404);
-        }
-
-        if ($user->hasRole('ADMIN') && $empreendimento->user != Auth::id()) {
-            return response()->json('Não autorizado', 403);
         }
 
         return new EmpreendimentoResource($empreendimento);

@@ -31,7 +31,7 @@ class IniciativaController extends Controller
             $iniciativas = Iniciativa::all();
         } else {
 
-            $iniciativas = Iniciativa::where('usuario', $user->id)->get();
+            $iniciativas = Iniciativa::where('user', $user->id)->get();
         }
 
         return IniciativaResource::collection($iniciativas);
@@ -62,18 +62,11 @@ class IniciativaController extends Controller
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Iniciativa pelo ID']);
 
-        $user = Auth::user();
-
         $iniciativa = Iniciativa::find($id);
 
         if (!$iniciativa) {
 
             return response()->json('Iniciativa não Encontrada', 404);
-        }
-
-        if ($user->hasRole('ADMIN') && $obra->user != Auth::id()) {
-
-            return response()->json('Não autorizado', 403);
         }
 
         return IniciativaResource::make($iniciativa);
@@ -99,7 +92,7 @@ class IniciativaController extends Controller
                 $iniciativa = Iniciativa::find($request->id);
             } else {
 
-                $iniciativa = Iniciativa::where('usuario', $user->id)->get();
+                $iniciativa = Iniciativa::where('user', $user->id)->get();
             }
 
             if ($iniciativa) {

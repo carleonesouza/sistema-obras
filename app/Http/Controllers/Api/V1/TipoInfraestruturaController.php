@@ -88,4 +88,14 @@ class TipoInfraestruturaController extends Controller
     {
         //
     }
+
+    public function tipoInfraBySetor($setor)
+    {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => ' Tipo Infraestrutura']);
+
+        $infras = TipoInfraestrutura::where('setor', $setor)->get();
+        
+        return TipoInfraestruturaResource::collection($infras);
+
+    }
 }

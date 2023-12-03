@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\BitolaController;
 use App\Http\Controllers\Api\V1\CommonUserController;
 use App\Http\Controllers\Api\V1\EmpreendimentoController;
 use App\Http\Controllers\Api\V1\FuncaoEstruturaController;
 use App\Http\Controllers\Api\V1\HandleUploadController;
 use App\Http\Controllers\Api\V1\IniciativaController;
 use App\Http\Controllers\Api\V1\IntervencaoController;
+use App\Http\Controllers\Api\V1\NaturezaEmpreendimentoController;
 use App\Http\Controllers\Api\V1\NivelDutoController;
 use App\Http\Controllers\Api\V1\ObraController;
 use App\Http\Controllers\Api\V1\ProdutoController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Api\V1\TipoInfraestruturaController;
 use App\Http\Controllers\Api\V1\TipoUsuarioController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UFController;
+use App\Http\Controllers\Api\V1\MunicipioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +60,11 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::apiResource('/funcao-estruturas', FuncaoEstruturaController::class);
     Route::apiResource('/nivel-dutos', NivelDutoController::class);
     Route::apiResource('/upload-file', HandleUploadController::class);    
+    Route::apiResource('/natureza-empreendimentos', NaturezaEmpreendimentoController::class);    
+    Route::apiResource('/bitolas', BitolaController::class);
+    Route::apiResource('/municipios', MunicipioController::class);       
+    Route::get('/tipos-infra/setor/{setor}', [TipoInfraestruturaController::class, 'tipoInfraBySetor']);       
+    Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']);       
 });
 
 // Protected routes for others
@@ -79,7 +87,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('/tipo-dutos', TipoDutoController::class);
     Route::apiResource('/funcao-estruturas', FuncaoEstruturaController::class);
     Route::apiResource('/nivel-dutos', NivelDutoController::class);
-    Route::apiResource('/upload-file', HandleUploadController::class);    
+    Route::apiResource('/upload-file', HandleUploadController::class);
+    Route::apiResource('/natureza-empreendimentos', NaturezaEmpreendimentoController::class);
+    Route::apiResource('/bitolas', BitolaController::class);          
+    Route::apiResource('/municipios', MunicipioController::class);    
+    Route::get('/tipos-infra/setor/{setor}', [TipoInfraestruturaController::class, 'tipoInfraBySetor']); 
+    Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']);           
 });
 
 

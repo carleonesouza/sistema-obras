@@ -2,20 +2,21 @@
 
 namespace App\Policies;
 
-use App\Models\Usuario;
+use App\Models\ObraProduto;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class UsuarioPolicy
+class ObraProdutoPolicy
 {
     use HandlesAuthorization;
 
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \App\Models\Usuario  $usuario
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(Usuario $user)
+    public function viewAny(User $user)
     {
         //
     }
@@ -23,29 +24,34 @@ class UsuarioPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \App\Models\Usuario  $usuario
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\ObraProduto  $obraProduto
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(Usuario $usuario)
+    public function view(User $user, ObraProduto $obraProduto)
     {
         //
     }
 
     /**
      * Determine whether the user can create models.
+     *
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(Usuario $user)
+    public function create(User $user)
     {
         //
     }
 
     /**
      * Determine whether the user can update the model.
-     * @param  \App\Models\Usuario  $usuario
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\ObraProduto  $obraProduto
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(Usuario $usuario)
+    public function update(User $user, ObraProduto $obraProduto)
     {
         //
     }
@@ -53,10 +59,11 @@ class UsuarioPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \App\Models\Usuario  $usuario
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\ObraProduto  $obraProduto
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(Usuario $usuario)
+    public function delete(User $user, ObraProduto $obraProduto)
     {
         //
     }
@@ -64,10 +71,11 @@ class UsuarioPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \App\Models\Usuario  $usuario
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\ObraProduto  $obraProduto
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(Usuario $usuario)
+    public function restore(User $user, ObraProduto $obraProduto)
     {
         //
     }
@@ -75,10 +83,11 @@ class UsuarioPolicy
     /**
      * Determine whether the user can permanently delete the model.
      *
-     * @param  \App\Models\Usuario  $usuario
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\ObraProduto  $obraProduto
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(Usuario $usuario)
+    public function forceDelete(User $user, ObraProduto $obraProduto)
     {
         //
     }

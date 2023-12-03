@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('instituicao_setor');
             $table->string('telefone');
             $table->string('email')->unique();
-            $table->foreignId('tipo_usuario_id')->references('id')->on('tipo_usuarios');
+            $table->foreignId('tipo_usuario')->references('id')->on('tipo_usuarios');
             $table->string('senha'); 
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

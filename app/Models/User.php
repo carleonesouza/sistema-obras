@@ -23,7 +23,7 @@ class User extends Authenticatable
         'telefone',
         'email',
         'instituicao_setor',
-        'tipo_usuario_id',
+        'tipo_usuario',
         'senha'
     ];
 
@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function tipoUsuario()
     {
-        return $this->belongsTo(TipoUsuario::class, 'tipo_usuario_id');
+        return $this->belongsTo(TipoUsuario::class, 'tipo_usuario');
     }
 
     public function empreendimentos():HasMany{

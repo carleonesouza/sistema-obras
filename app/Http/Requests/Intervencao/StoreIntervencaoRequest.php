@@ -26,7 +26,6 @@ class StoreIntervencaoRequest extends FormRequest
         return [
             'descricao' => ['required', 'string', 'max:200'],
             'setor'=>['required'],
-           
         ];
     }
 }

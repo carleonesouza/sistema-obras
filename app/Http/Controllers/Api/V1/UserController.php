@@ -24,7 +24,17 @@ class UserController extends Controller
     public function index()
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar todos Usuários']);
-        return UserResource::collection(User::all());
+        
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+
+            return UserResource::collection(User::all());
+
+        } else {
+            return response()->json('Não autorizado', 403);
+        }
+        
     }
 
     /**
@@ -37,15 +47,25 @@ class UserController extends Controller
     {
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Usuário']);
         $request->validated();
-        $user = User::create([
-            'nome' => $request->nome,
-            'instituicao_setor' => $request->instituicao_setor,
-            'telefone' => $request->telefone,
-            'email' => $request->email,
-            'tipo_usuario_id' => $request->tipo_usuario_id,
-            'senha' => Hash::make($request->senha),
-        ]);
-        return UserResource::make($user);
+
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+
+            $new_user = User::create([
+                'nome' => $request->nome,
+                'instituicao_setor' => $request->instituicao_setor,
+                'telefone' => $request->telefone,
+                'email' => $request->email,
+                'tipo_usuario' => $request->tipo_usuario,
+                'senha' => Hash::make($request->senha),
+            ]);
+
+        } else {
+            return response()->json('Não autorizado', 403);
+        }
+
+        return UserResource::make($new_user);
     }
 
     /**
@@ -79,14 +99,20 @@ class UserController extends Controller
     {
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID']);
-
             
+            $user = Auth::user();            
             
-            $user = User::find($request->id);
+            $sended_user = User::find($request->id);
 
-            if($user){
-                $user->update($request->all());
-                return UserResource::make($user);
+            if ($user->hasRole('ADMIN') && $sended_user) {
+
+                $sended_user->update($request->all());
+                
+                return UserResource::make($sended_user);
+
+            }else{
+
+                return response()->json('Não autorizado', 403);
             }
            
             return throw ValidationException::withMessages(['Não foi possível atualizar o Usuário']);;

@@ -12,4 +12,10 @@ class Produto extends Model
     protected $fillable = [
         'descricao',
     ];
+
+
+    public function obras()
+    {
+        return $this->belongsToMany(Obra::class, 'obra_produto');
+    }
 }

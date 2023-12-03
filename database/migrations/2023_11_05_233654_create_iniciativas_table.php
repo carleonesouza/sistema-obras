@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();            
             $table->string('nome');
             $table->string('responsavel');
-            $table->string('ele_principal_afetado');
+            $table->string('descricao');
             $table->string('expectativa');
             $table->string('instrumento');
-            $table->foreignId('usuario')->references('id')->on('users');
+            $table->foreignId('user')->references('id')->on('users');
             $table->unsignedBigInteger('status')->nullable();
             $table->foreign('status')->references('id')->on('statuses');
             $table->unsignedBigInteger('setor')->nullable();

@@ -15,7 +15,6 @@ interface Obras {
     public function setDataInicio(\DateTime $dataInicio);
     public function setDataConclusao(\DateTime $dataConclusao);
     public function attachDocumentosAdicionais($documentos);
-    public function setEndereco(\App\Models\Endereco $endereco);
     public function setArquivoGeorreferenciado($arquivo);
     public function setValorGlobal($valor);
     public function setPercentualFinanceiroExecutado($percentual);

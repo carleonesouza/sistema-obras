@@ -11,9 +11,6 @@ use App\Models\Obra;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\File;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 
 class ObraController extends Controller
 {
@@ -24,20 +21,24 @@ class ObraController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Obra']);
+        Log::channel('user_activity')->info('User action', [
+            'user' => Auth::user()->email,
+            'Listou' => 'Obra'
+        ]);
 
         $user = Auth::user();
 
         if ($user->hasRole('ADMIN')) {
-
-            $obras = Obra::all();
+            // Eager load 'produtos' relationship
+            $obras = Obra::with(['produtos', 'municipios'])->get();
         } else {
-
-            $obras = Obra::where('user', $user->id)->get();
+            // Eager load 'produtos' relationship
+            $obras = Obra::with(['produtos', 'municipios'])->where('user', $user->id)->get();
         }
 
         return ObraResource::collection($obras);
     }
+
 
 
     /**
@@ -48,26 +49,31 @@ class ObraController extends Controller
      */
     public function store(StoreObraRequest $request)
     {
-
         try {
-
-
             Log::channel('user_activity')->info('User action', [
                 'user' => Auth::user()->email,
                 'Criou' => 'Obra'
             ]);
 
-            // Add the endereco_id to the request data for Obra
-            $obraData = $request->all();
-
+            // Create the Obra
+            $obraData = $request->except('produtos'); // Exclude product_ids from Obra data
+            $obraData = $request->except('municipios');
             $obra = Obra::create($obraData);
+
+            // Associate Products with the newly created Obra
+            if ($request->has('produtos')) {
+                $productIds = $request->input('produtos');
+                $obra->produtos()->attach($productIds);
+            }
+
+            if ($request->has('municipios')) {
+                $municipiosIds = $request->input('municipios');
+                $obra->municipios()->attach($municipiosIds);
+            }
 
             return ObraResource::make($obra);
         } catch (Exception $e) {
-            // Log the exception for debugging purposes.
             Log::error('Error creating Obra: ' . $e->getMessage());
-
-            // Return an error response or handle the error as needed.
             return response()->json('Falha ao Criar Obra: ' . $e->getMessage(), 500);
         }
     }
@@ -81,22 +87,22 @@ class ObraController extends Controller
      */
     public function show($id)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => ' Obra pelo ID']);
+        Log::channel('user_activity')->info('User action', [
+            'user' => Auth::user()->email,
+            'Consultou' => 'Obra pelo ID'
+        ]);
 
-        $obra = Obra::find($id);
+        // Eager load 'produtos' relationship
+        $obra = Obra::with(['produtos', 'municipios'])->find($id);
 
-        $user = Auth::user();
 
         if (!$obra) {
             return response()->json('Obra não Encontrada', 404);
         }
 
-        if ($user->hasRole('ADMIN') && $obra->user != Auth::id()) {
-            return response()->json('Não autorizado', 403);
-        }
-
         return ObraResource::make($obra);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -108,29 +114,39 @@ class ObraController extends Controller
     public function update(UpdateObraRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Obra pelo ID']);
+            Log::channel('user_activity')->info('User action', [
+                'user' => Auth::user()->email,
+                'Atualizou' => 'Obra pelo ID'
+            ]);
 
             $user = Auth::user();
 
             if ($user->hasRole('ADMIN')) {
                 $obra = Obra::find($request->id);
             } else {
-
-                $obra = Obra::where('user', $user->id)->get();
+                $obra = Obra::where('user', $user->id)->where('id', $request->id)->first();
             }
 
-            if ($obra) {
-                $data = $request->all();
-                // Remove 'id' from the data array
-                $data = Arr::except($data, ['id']);
-                $obra->update($data);
+            if (!$obra) {
+                return response()->json('Obra não encontrada', 404);
             }
-            return ObraResource::make($obra);
+
+            $data = $request->except(['id', 'produtos', 'municipios']); // Exclude 'id' and 'product_ids'
+            $obra->update($data);
+
+            // Update 'produtos' relationship if 'product_ids' is provided
+            if ($request->has('produtos')) {
+                $obra->produtos()->sync($request->produtos);
+            }
+
+            if ($request->has('municipios')) {
+                $obra->municipios()->sync($request->municipios);
+            }
+
+            return ObraResource::make($obra->load(['produtos', 'municipios']));
         } catch (Exception $e) {
-            // Log the exception for Obra purposes.
-            Log::error('Error updating Obra: ' . $e->getMessage());
 
-            // Return an error response or handle the error as needed.
+            Log::error('Error updating Obra: ' . $e->getMessage());
             return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
         }
     }
