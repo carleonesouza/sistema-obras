@@ -64,7 +64,8 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::apiResource('/bitolas', BitolaController::class);
     Route::apiResource('/municipios', MunicipioController::class);       
     Route::get('/tipos-infra/setor/{setor}', [TipoInfraestruturaController::class, 'tipoInfraBySetor']);       
-    Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']);       
+    Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']); 
+    Route::get('/empreendimentos/setor/{setor}', [EmpreendimentoController::class, 'empreendimentoBySetor']);        
 });
 
 // Protected routes for others
@@ -92,7 +93,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('/bitolas', BitolaController::class);          
     Route::apiResource('/municipios', MunicipioController::class);    
     Route::get('/tipos-infra/setor/{setor}', [TipoInfraestruturaController::class, 'tipoInfraBySetor']); 
-    Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']);           
+    Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']); 
+    Route::get('/empreendimentos/setor/{setor}', [EmpreendimentoController::class, 'empreendimentoBySetor']);             
 });
 
 

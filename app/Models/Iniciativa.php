@@ -14,7 +14,7 @@ class Iniciativa extends Model
     protected $fillable = [
         'nome',
         'responsavel',
-        'ele_principal_afetado',
+        'descricao',
         'expectativa',
         'status',
         'instrumento',

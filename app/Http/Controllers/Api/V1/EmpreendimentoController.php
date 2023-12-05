@@ -43,9 +43,36 @@ class EmpreendimentoController extends Controller
      */
     public function store(StoreEmpreendimentoRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Empreendimento']);
-        $empreendimento = Empreendimento::create($request->validated());
+
+        try{
+            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Empreendimento']);
+
+        $validated = $request->validated();
+
+        if (!$validated['natureza_empreendimento']) {
+
+            return response()->json(['message' => 'Bad Request'], 400);
+        }
+               
+        $empreendimento = Empreendimento::create([
+            'nome' => $request->nome,
+            'responsavel' => $request->responsavel,
+            'setor' => $request->setor,
+            'natureza_empreendimento' => $request->natureza_empreendimento,
+            'user' => $request->user,
+            'status' =>$request->status
+        ]);
+
         return EmpreendimentoResource::make($empreendimento);
+            
+        }catch(Exception $e) {
+            // Log the exception for debugging purposes.
+            Log::error('Error creating Empreendimento: ' . $e->getMessage());
+
+            // Return an error response or handle the error as needed.
+            return response()->json('Falha ao criar Empreendimento: ' . $e->getMessage(), 500);
+        }
+        
     }
 
     /**
@@ -122,5 +149,15 @@ class EmpreendimentoController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    public function empreendimentoBySetor($setor)
+    {
+        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => ' Empreendimentos']);
+
+        $empreendimentos = Empreendimento::where('setor', $setor)->get();
+        
+        return EmpreendimentoResource::collection($empreendimentos);
+
     }
 }

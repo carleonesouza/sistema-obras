@@ -24,14 +24,14 @@ class StoreObraRequest extends FormRequest
     public function rules()
     {
         return [
-            'uf' => ['required'],
             'descricao' => ['required', 'string', 'max:200'],
             'tipo' => ['required'],
             'responsavel' => ['required'],
             'empreendimento' => ['required'],
             'tipo_infraestrutura' => ['required'],
             'intervencao' => ['required'],
-            'situacao' => ['required'],
+            'dataInicio' => ['required'],
+            'dataConclusao' => ['required'],
             'status' => ['required'],
             'user' => ['required'],
             'data_base_orcamento' => ['required'],

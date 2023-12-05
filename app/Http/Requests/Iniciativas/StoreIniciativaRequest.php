@@ -30,7 +30,7 @@ class StoreIniciativaRequest extends FormRequest
             'expectativa'=> ['required', 'string', 'max:200'],          
             'instrumento' => ['required','string', 'max:200'],
             'setor'=>['required'],
-            'usuario' =>['required'],
+            'user' =>['required'],
             'status'=> ['required']
         ];
     }

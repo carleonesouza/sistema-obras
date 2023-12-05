@@ -22,6 +22,7 @@ class Empreendimento extends Model
         'obras',
         'usuario_que_alterou',
         'user',
+        'natureza_empreendimento',
         'status'
     ];
  
@@ -35,6 +36,10 @@ class Empreendimento extends Model
     
     public function setor() {
         return $this->belongsTo(Setor::class, 'setor');
+    }
+
+    public function natureza_empreendimento() {
+        return $this->belongsTo(NaturezaEmpreendimento::class, 'natureza_empreendimento');
     }
 
 }

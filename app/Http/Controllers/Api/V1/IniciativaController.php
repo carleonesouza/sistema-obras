@@ -45,11 +45,32 @@ class IniciativaController extends Controller
      */
     public function store(StoreIniciativaRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Iniciativa']);
 
-        $iniciativa = Iniciativa::create($request->validated());
+        try{
+            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Iniciativa']);     
+     
+
+            $iniciativa = Iniciativa::create([
+                'nome' => $request->nome,
+                'descricao' => $request->descricao,
+                'expectativa' => $request->expectativa,
+                'instrumento' => $request->instrumento,
+                'responsavel' => $request->responsavel,
+                'setor' => $request->setor,
+                'status' => $request->status,
+                'user' => $request->user
+            ]);
+
+            return IniciativaResource::make($iniciativa);
+
+        }catch(Exception $e) {
+            // Log the exception for debugging purposes.
+            Log::error('Error creating iniciativa: ' . $e->getMessage());
+
+            // Return an error response or handle the error as needed.
+            return response()->json('Falha ao cadastrar iniciativa: ' . $e->getMessage(), 500);
+        }
         
-        return IniciativaResource::make($iniciativa);
     }
 
     /**
