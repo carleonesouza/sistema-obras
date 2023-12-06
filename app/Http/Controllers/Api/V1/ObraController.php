@@ -51,6 +51,7 @@ class ObraController extends Controller
      */
     public function store(StoreObraRequest $request)
     {
+
         DB::beginTransaction();
 
         try {
@@ -59,37 +60,37 @@ class ObraController extends Controller
                 'Criou' => 'Obra'
             ]);
 
-            
 
             // Create the Obra
-            $obraData = $request->except('produtos'); // Exclude product_ids from Obra data
-            $obraData = $request->except('municipios');
+            $obraData = $request->except(['produtos', 'municipios']); // Exclude product_ids from Obra data
+
             $obra = Obra::create($obraData);
 
             // Associate Products with the newly created Obra
             if ($request->has('produtos')) {
-                $productIds = $request->input('produtos');
+
+                $productIds = collect($request->input('produtos'))->pluck('produto_id');
                 $obra->produtos()->attach($productIds);
             }
 
-            if ($request->has('municipios')) {
-                $municipioData  = $request->input('municipios');
-                $municipio = Municipio::create($municipioData);
+            if ($request->has('municipios')) {                
 
-                $municipioId = $municipio->id;
-
-               $obra->municipios()->attach($municipioId);
+                foreach ($request->input('municipios') as $municipioData) {
+                       
+                    $municipio = Municipio::create($municipioData);
+                    $obra->municipios()->attach($municipio->id);
+                }
+                
             }
 
             DB::commit();
 
             return ObraResource::make($obra);
-             
         } catch (Exception $e) {
             DB::rollBack();
 
             Log::error('Error creating Obra: ' . $e->getMessage());
-            
+
             return response()->json('Falha ao Criar Obra: ' . $e->getMessage(), 500);
         }
     }

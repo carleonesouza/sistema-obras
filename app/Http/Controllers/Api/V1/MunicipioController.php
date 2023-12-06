@@ -34,7 +34,14 @@ class MunicipioController extends Controller
     {
         try{
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Municipio']);
-            $municipio = Municipio::create($request->validated());
+
+            $request->validated();
+
+            $municipio = Municipio::create(
+                [
+                    'nome' => $request->nome,
+                    'uf' => $request->uf                    
+                ]);
             return MunicipioResource::make($municipio);
             
         }catch (Exception $e) {

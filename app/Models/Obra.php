@@ -61,7 +61,6 @@ class Obra extends Model
         'materialTransportado',
         'nivelDuto',
         'codigoOrigem',
-        'natureza_empreendimento',
         'codigoDestino',
         'data_base_orcamento',
         'nomeXRL', 

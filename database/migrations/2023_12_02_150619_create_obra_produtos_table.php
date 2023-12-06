@@ -13,17 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('obra_produtos', function (Blueprint $table) {
-            $table->unsignedBigInteger('obra');
-            $table->unsignedBigInteger('produto');
-            $table->primary(['obra', 'produto']); // Composite primary key
+        Schema::create('obra_produto', function (Blueprint $table) {
+            $table->unsignedBigInteger('obra_id');
+            $table->unsignedBigInteger('produto_id');
+            $table->primary(['obra_id', 'produto_id']); // Composite primary key
         
             // Foreign key constraints
-            $table->foreign('obra')->references('id')->on('obras')->onDelete('cascade');
-            $table->foreign('produto')->references('id')->on('produtos')->onDelete('cascade');
+            $table->foreign('obra_id')->references('id')->on('obras')->onDelete('cascade');
+            $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
         
             $table->timestamps();
         });
+
+        // Schema::table('obra_produto', function(Blueprint $table) {
+        //     $table->renameColumn('obra', 'obra_id');
+        //     $table->renameColumn('produto', 'produto_id');
+        // });
     }
 
     /**
@@ -33,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('obra_produtos');
+        Schema::dropIfExists('obra_produto');
     }
 };

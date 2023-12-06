@@ -80,15 +80,24 @@ return new class extends Migration
             $table->string('versao')->nullable();
 
             //Obra Portuária
-            $table->string('tipoEmbarcacao')->nullable();  
-            $table->string('ampliacaoCapacidade')->nullable();  
+            $table->string('tipoEmbarcacao')->nullable(); 
+
+            $table->unsignedBigInteger('ampliacaoCapacidade')->nullable();
+            $table->foreign('ampliacaoCapacidade')->references('id')->on('sim_naos');
+
             $table->float('novoCalado')->nullable();    
             $table->float('capacidadeDinamica')->nullable();
 
             //Obra Hidroviária
-            $table->string('situacaoHidrovia')->nullable();    
-            $table->string('temEclusa')->nullable();    
-            $table->string('temBarragem')->nullable();        
+            $table->string('situacaoHidrovia')->nullable();   
+
+            $table->unsignedBigInteger('temEclusa')->nullable();
+            $table->foreign('temEclusa')->references('id')->on('sim_naos');
+            $table->unsignedBigInteger('temBarragem')->nullable();
+            $table->foreign('temBarragem')->references('id')->on('sim_naos');
+
+             
+                
             $table->float('profundidadeMinima')->nullable();    
             $table->float('profundidadeMaxima')->nullable();    
             $table->string('comboiosCheia')->nullable();    
