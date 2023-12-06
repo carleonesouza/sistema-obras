@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('obra_municipio', function (Blueprint $table) {
+        Schema::create('obra_municipios', function (Blueprint $table) {
             $table->unsignedBigInteger('obra_id');
             $table->unsignedBigInteger('municipio_id');
             $table->primary(['obra_id', 'municipio_id']); // Composite primary key
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('obra_municipio');
+        Schema::dropIfExists('obra_municipios');
     }
 };
