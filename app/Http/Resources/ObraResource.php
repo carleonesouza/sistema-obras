@@ -20,6 +20,7 @@ class ObraResource extends JsonResource
             'id' => (string)$this->id,
             'tipo' => $this->tipo,
             'descricao' => $this->descricao,
+            'responsavel' => $this->responsavel,
             'latitude' => $this->latitude,
             'user' =>  Obra::where('user', $this->user)->with('user')->first(),
             'longitude' => $this->longitude,
