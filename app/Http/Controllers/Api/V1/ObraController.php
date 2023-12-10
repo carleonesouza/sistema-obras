@@ -10,10 +10,10 @@ use App\Http\Resources\ObraResource;
 use App\Models\Municipio;
 use App\Models\Obra;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class ObraController extends Controller
 {
@@ -22,7 +22,7 @@ class ObraController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         Log::channel('user_activity')->info('User action', [
             'user' => Auth::user()->email,
@@ -31,17 +31,22 @@ class ObraController extends Controller
 
         $user = Auth::user();
 
+        // Retrieve itemsPerPage from request, set default to 15 if not provided
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+
+        // Optional: Validate or limit itemsPerPage to prevent unreasonable values
+        $itemsPerPage = max(1, min($itemsPerPage, 100)); // Ensures it's between 1 and 100
+
         if ($user->hasRole('ADMIN')) {
-            // Eager load 'produtos' relationship
-            $obras = Obra::with(['produtos', 'municipios'])->get();
+            // Eager load 'produtos' and 'municipios' relationships and paginate
+            $obras = Obra::with(['produtos', 'municipios'])->paginate($itemsPerPage);
         } else {
-            // Eager load 'produtos' relationship
-            $obras = Obra::with(['produtos', 'municipios'])->where('user', $user->id)->get();
+            // Eager load 'produtos' and 'municipios' relationships, filter by user, and paginate
+            $obras = Obra::with(['produtos', 'municipios'])->where('user', $user->id)->paginate($itemsPerPage);
         }
 
         return ObraResource::collection($obras);
     }
-
 
 
     /**
@@ -74,14 +79,13 @@ class ObraController extends Controller
                 $obra->produtos()->attach($productIds);
             }
 
-            if ($request->has('municipios')) {                
+            if ($request->has('municipios')) {
 
                 foreach ($request->input('municipios') as $municipioData) {
-                       
+
                     $municipio = Municipio::create($municipioData);
                     $obra->municipios()->attach($municipio->id);
                 }
-                
             }
 
             DB::commit();
@@ -131,55 +135,52 @@ class ObraController extends Controller
      */
 
     public function update(UpdateObraRequest $request)
-{
-    try {
-        Log::channel('user_activity')->info('User action', [
-            'user' => Auth::user()->email,
-            'Atualizou' => 'Obra pelo ID'
-        ]);
+    {
+        try {
+            Log::channel('user_activity')->info('User action', [
+                'user' => Auth::user()->email,
+                'Atualizou' => 'Obra pelo ID'
+            ]);
 
-        $user = Auth::user();
+            $user = Auth::user();
 
-        if ($user->hasRole('ADMIN')) {
-            $obra = Obra::find($request->id);
-        } else {
-            $obra = Obra::where('user', $user->id)->where('id', $request->id)->first();
+            if ($user->hasRole('ADMIN')) {
+                $obra = Obra::find($request->id);
+            } else {
+                $obra = Obra::where('user', $user->id)->where('id', $request->id)->first();
+            }
+
+            if (!$obra) {
+                return response()->json('Obra não encontrada', 404);
+            }
+
+            $data = $request->except(['id', 'produtos', 'municipios']);
+            $obra->update($data);
+
+            // Update 'produtos' relationship if 'produtos' is provided
+            if ($request->has('produtos')) {
+                $obra->produtos()->attach($request->produtos);
+            }
+
+            if ($request->has('municipios')) {
+                foreach ($request->input('municipios') as $municipioData) {
+
+                    if (!$municipioData['municipio_id']) {
+
+                        $municipio = Municipio::create($municipioData);
+                        $obra->municipios()->attach($municipio->id);
+                    } else {
+                        $obra->municipios()->sync([$municipioData]);
+                    }
+                }
+            }
+
+            return ObraResource::make($obra->load(['produtos', 'municipios']));
+        } catch (Exception $e) {
+            Log::error('Error updating Obra: ' . $e->getMessage());
+            return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
         }
-
-        if (!$obra) {
-            return response()->json('Obra não encontrada', 404);
-        }
-
-        $data = $request->except(['id', 'produtos', 'municipios']);
-        $obra->update($data);
-
-        // Update 'produtos' relationship if 'produtos' is provided
-        if ($request->has('produtos')) {
-            $obra->produtos()->attach($request->produtos);
-        }
-
-        if ($request->has('municipios')) {     
-            foreach ($request->input('municipios') as $municipioData) {   
-
-                if(!$municipioData['municipio_id']){                    
-
-                    $municipio = Municipio::create($municipioData);
-                    $obra->municipios()->attach($municipio->id);
-
-                } else{                    
-                    $obra->municipios()->sync([$municipioData]);
-                }             
-               
-            }           
-            
-        }
-
-        return ObraResource::make($obra->load(['produtos', 'municipios']));
-    } catch (Exception $e) {
-        Log::error('Error updating Obra: ' . $e->getMessage());
-        return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
     }
-}
 
     /**
      * Remove the specified resource from storage.
@@ -210,13 +211,13 @@ class ObraController extends Controller
             ]);
 
             $user = Auth::user();
-    
+
             if ($user->hasRole('ADMIN')) {
                 $obra = Obra::with('municipios')->find($id);
             } else {
                 $obra = Obra::with('municipios')->where('user', $user->id)->where('id', $id)->first();
             }
-    
+
             if (!$obra) {
                 return response()->json('Obra não encontrada', 404);
             }
@@ -226,16 +227,14 @@ class ObraController extends Controller
                 $obra->municipios()->detach($request->id);
 
                 return response()->json(['message' => 'Município removido com Sucesso!'], 201);
-
             } else {
                 return response()->json(['message' => 'ID(s) de Município não fornecido(s) ou inválido(s)!'], 400);
             }
-    
         } catch (Exception $e) {
             return response()->json('Falha ao remover município da Obra: ' . $e->getMessage(), 500);
         }
     }
-    
+
 
     public function removeProduto($id, UpdateObraRequest $request)
     {
@@ -244,30 +243,28 @@ class ObraController extends Controller
                 'user' => Auth::user()->email,
                 'Removeu' => 'Produto da Obra pelo ID'
             ]);
-    
+
             $user = Auth::user();
-    
+
             if ($user->hasRole('ADMIN')) {
                 $obra = Obra::with('produtos')->find($id);
             } else {
                 $obra = Obra::with('produtos')->where('user', $user->id)->where('id', $id)->first();
             }
-    
+
             if (!$obra) {
                 return response()->json('Obra não encontrada', 404);
             }
-    
+
             if (!$obra->produtos->isEmpty()) {
                 $obra->produtos()->detach($request->id);
                 return response()->json(['message' => 'Produto removido com Sucesso!'], 201);
             } else {
                 return response()->json(['message' => 'Não foi possível remover o Produto, Produto não encontrado na Obra!'], 404);
             }
-    
         } catch (Exception $e) {
             Log::error('Error Deleting Produto from Obra: ' . $e->getMessage());
             return response()->json('Falha ao remover produto da Obra: ' . $e->getMessage(), 500);
         }
     }
-
 }

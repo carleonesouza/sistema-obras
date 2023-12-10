@@ -11,6 +11,7 @@ use App\Http\Resources\EmpreendimentoResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Http\Request;
 
 class EmpreendimentoController extends Controller
 {
@@ -19,21 +20,31 @@ class EmpreendimentoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Empreendimentos']);
-
+        Log::channel('user_activity')->info('User action', [
+            'user' => Auth::user()->email, 
+            'Listou' => 'Empreendimentos'
+        ]);
+    
         $user = Auth::user();
-
+    
+        // Retrieve itemsPerPage from request, set default to 15 if not provided
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+    
+        // Optional: Validate or limit itemsPerPage to prevent unreasonable values
+        $itemsPerPage = max(1, min($itemsPerPage, 100)); // Ensures it's between 1 and 100
+    
         if ($user->hasRole('ADMIN')) {
-
-            $empreendimentos = Empreendimento::all();
+            // Eager load relationships if necessary and paginate
+            $empreendimentos = Empreendimento::paginate($itemsPerPage);
         } else {
-            $empreendimentos = Empreendimento::where('user', $user->id)->get();
+            // Eager load relationships if necessary, filter by user, and paginate
+            $empreendimentos = Empreendimento::where('user', $user->id)->paginate($itemsPerPage);
         }
-
+    
         return EmpreendimentoResource::collection($empreendimentos);
-    }
+    }   
 
     /**
      * Store a newly created resource in storage.

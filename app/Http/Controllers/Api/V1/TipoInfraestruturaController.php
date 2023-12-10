@@ -8,6 +8,7 @@ use App\Http\Requests\TipoInfraestrutura\UpdateTipoInfraestruturaRequest;
 use App\Http\Resources\TipoInfraestruturaResource;
 use App\Models\TipoInfraestrutura;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -18,11 +19,25 @@ class TipoInfraestruturaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Tipo Infraestrutura']);
-        return TipoInfraestruturaResource::collection(TipoInfraestrutura::all());
+        Log::channel('user_activity')->info('User action', [
+            'user' => Auth::user()->email, 
+            'Listou' => 'Tipo Infraestrutura'
+        ]);
+    
+        // Retrieve itemsPerPage from request, set default to 15 if not provided
+        $itemsPerPage = $request->input('itemsPerPage', 15);
+    
+        // Optional: Validate or limit itemsPerPage to prevent unreasonable values
+        $itemsPerPage = max(1, min($itemsPerPage, 100)); // Ensures it's between 1 and 100
+    
+        // Apply pagination
+        $tiposInfraestrutura = TipoInfraestrutura::paginate($itemsPerPage);
+    
+        return TipoInfraestruturaResource::collection($tiposInfraestrutura);
     }
+    
 
     /**
      * Store a newly created resource in storage.
