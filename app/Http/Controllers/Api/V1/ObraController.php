@@ -128,45 +128,57 @@ class ObraController extends Controller
      * @param  \App\Models\Obra  $obra
      * @return \Illuminate\Http\Response
      */
+
     public function update(UpdateObraRequest $request)
-    {
-        try {
-            Log::channel('user_activity')->info('User action', [
-                'user' => Auth::user()->email,
-                'Atualizou' => 'Obra pelo ID'
-            ]);
+{
+    try {
+        Log::channel('user_activity')->info('User action', [
+            'user' => Auth::user()->email,
+            'Atualizou' => 'Obra pelo ID'
+        ]);
 
-            $user = Auth::user();
+        $user = Auth::user();
 
-            if ($user->hasRole('ADMIN')) {
-                $obra = Obra::find($request->id);
-            } else {
-                $obra = Obra::where('user', $user->id)->where('id', $request->id)->first();
-            }
-
-            if (!$obra) {
-                return response()->json('Obra não encontrada', 404);
-            }
-
-            $data = $request->except(['id', 'produtos', 'municipios']); // Exclude 'id' and 'product_ids'
-            $obra->update($data);
-
-            // Update 'produtos' relationship if 'product_ids' is provided
-            if ($request->has('produtos')) {
-                $obra->produtos()->sync($request->produtos);
-            }
-
-            if ($request->has('municipios')) {
-                $obra->municipios()->sync($request->municipios);
-            }
-
-            return ObraResource::make($obra->load(['produtos', 'municipios']));
-        } catch (Exception $e) {
-
-            Log::error('Error updating Obra: ' . $e->getMessage());
-            return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
+        if ($user->hasRole('ADMIN')) {
+            $obra = Obra::find($request->id);
+        } else {
+            $obra = Obra::where('user', $user->id)->where('id', $request->id)->first();
         }
+
+        if (!$obra) {
+            return response()->json('Obra não encontrada', 404);
+        }
+
+        $data = $request->except(['id', 'produtos', 'municipios']);
+        $obra->update($data);
+
+        // Update 'produtos' relationship if 'produtos' is provided
+        if ($request->has('produtos')) {
+            $obra->produtos()->attach($request->produtos);
+        }
+
+        if ($request->has('municipios')) {     
+            foreach ($request->input('municipios') as $municipioData) {   
+
+                if(!$municipioData['municipio_id']){                    
+
+                    $municipio = Municipio::create($municipioData);
+                    $obra->municipios()->attach($municipio->id);
+
+                } else{                    
+                    $obra->municipios()->sync([$municipioData]);
+                }             
+               
+            }           
+            
+        }
+
+        return ObraResource::make($obra->load(['produtos', 'municipios']));
+    } catch (Exception $e) {
+        Log::error('Error updating Obra: ' . $e->getMessage());
+        return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
     }
+}
 
     /**
      * Remove the specified resource from storage.
@@ -186,5 +198,48 @@ class ObraController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    public function removeMunicipio($id, UpdateObraRequest $request)
+    {
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+            $obra = Obra::find($id);
+        } else {
+            $obra = Obra::where('user', $user->id)->where('id', $id)->first();
+        }
+
+        if (!$obra) {
+            return response()->json('Obra não encontrada', 404);
+        }
+       
+        $obra->municipios()->detach($request->all());    
+
+        return response()->json(['message' =>'Município removido com Sucesso!'], 201);
+
+
+    }
+
+    public function removeProduto($id, UpdateObraRequest $request)
+    {
+  
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+            $obra = Obra::find($id);
+        } else {
+            $obra = Obra::where('user', $user->id)->where('id', $id)->first();
+        }
+
+        if (!$obra) {
+            return response()->json('Obra não encontrada', 404);
+        }
+        
+        $obra->produtos()->detach($request->all());    
+
+        return response()->json(['message' =>'Produto removido com Sucesso!'], 201);
+
+
     }
 }

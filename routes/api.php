@@ -66,6 +66,8 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::get('/tipos-infra/setor/{setor}', [TipoInfraestruturaController::class, 'tipoInfraBySetor']);       
     Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']); 
     Route::get('/empreendimentos/setor/{setor}', [EmpreendimentoController::class, 'empreendimentoBySetor']);        
+    Route::put('/obras/produto/{obra}', [ObraController::class, 'removeProduto']);        
+    Route::put('/obras/municipio/{obra}', [ObraController::class, 'removeMunicipio']);        
 });
 
 // Protected routes for others
@@ -94,7 +96,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('/municipios', MunicipioController::class);    
     Route::get('/tipos-infra/setor/{setor}', [TipoInfraestruturaController::class, 'tipoInfraBySetor']); 
     Route::get('/intervencoes/setor/{setor}', [IntervencaoController::class, 'intervencaoBySetor']); 
-    Route::get('/empreendimentos/setor/{setor}', [EmpreendimentoController::class, 'empreendimentoBySetor']);             
+    Route::get('/empreendimentos/setor/{setor}', [EmpreendimentoController::class, 'empreendimentoBySetor']);   
+    Route::put('/obras/produto/{obra}', [ObraController::class, 'removeProduto']);        
+    Route::put('/obras/municipio/{obra}', [ObraController::class, 'removeMunicipio']);            
 });
 
 
