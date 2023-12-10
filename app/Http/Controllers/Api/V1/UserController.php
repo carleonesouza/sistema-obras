@@ -115,7 +115,7 @@ class UserController extends Controller
                 return response()->json('Não autorizado', 403);
             }
            
-            return throw ValidationException::withMessages(['Não foi possível atualizar o Usuário']);;
+            return throw ValidationException::withMessages(['Não foi possível atualizar o Usuário']);
            
         } catch (Exception $e) {
             // Log the exception for debugging purposes.

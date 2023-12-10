@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ObraController extends Controller
 {
@@ -202,44 +203,71 @@ class ObraController extends Controller
 
     public function removeMunicipio($id, UpdateObraRequest $request)
     {
-        $user = Auth::user();
+        try {
+            Log::channel('user_activity')->info('User action', [
+                'user' => Auth::user()->email,
+                'Removeu' => 'Municipio da Obra pelo ID'
+            ]);
 
-        if ($user->hasRole('ADMIN')) {
-            $obra = Obra::find($id);
-        } else {
-            $obra = Obra::where('user', $user->id)->where('id', $id)->first();
+            $user = Auth::user();
+    
+            if ($user->hasRole('ADMIN')) {
+                $obra = Obra::with('municipios')->find($id);
+            } else {
+                $obra = Obra::with('municipios')->where('user', $user->id)->where('id', $id)->first();
+            }
+    
+            if (!$obra) {
+                return response()->json('Obra não encontrada', 404);
+            }
+
+            if (!$obra->municipios->isEmpty()) {
+
+                $obra->municipios()->detach($request->id);
+
+                return response()->json(['message' => 'Município removido com Sucesso!'], 201);
+
+            } else {
+                return response()->json(['message' => 'ID(s) de Município não fornecido(s) ou inválido(s)!'], 400);
+            }
+    
+        } catch (Exception $e) {
+            return response()->json('Falha ao remover município da Obra: ' . $e->getMessage(), 500);
         }
-
-        if (!$obra) {
-            return response()->json('Obra não encontrada', 404);
-        }
-       
-        $obra->municipios()->detach($request->all());    
-
-        return response()->json(['message' =>'Município removido com Sucesso!'], 201);
-
-
     }
+    
 
     public function removeProduto($id, UpdateObraRequest $request)
     {
-  
-        $user = Auth::user();
-
-        if ($user->hasRole('ADMIN')) {
-            $obra = Obra::find($id);
-        } else {
-            $obra = Obra::where('user', $user->id)->where('id', $id)->first();
+        try {
+            Log::channel('user_activity')->info('User action', [
+                'user' => Auth::user()->email,
+                'Removeu' => 'Produto da Obra pelo ID'
+            ]);
+    
+            $user = Auth::user();
+    
+            if ($user->hasRole('ADMIN')) {
+                $obra = Obra::with('produtos')->find($id);
+            } else {
+                $obra = Obra::with('produtos')->where('user', $user->id)->where('id', $id)->first();
+            }
+    
+            if (!$obra) {
+                return response()->json('Obra não encontrada', 404);
+            }
+    
+            if (!$obra->produtos->isEmpty()) {
+                $obra->produtos()->detach($request->id);
+                return response()->json(['message' => 'Produto removido com Sucesso!'], 201);
+            } else {
+                return response()->json(['message' => 'Não foi possível remover o Produto, Produto não encontrado na Obra!'], 404);
+            }
+    
+        } catch (Exception $e) {
+            Log::error('Error Deleting Produto from Obra: ' . $e->getMessage());
+            return response()->json('Falha ao remover produto da Obra: ' . $e->getMessage(), 500);
         }
-
-        if (!$obra) {
-            return response()->json('Obra não encontrada', 404);
-        }
-        
-        $obra->produtos()->detach($request->all());    
-
-        return response()->json(['message' =>'Produto removido com Sucesso!'], 201);
-
-
     }
+
 }
