@@ -22,10 +22,10 @@ class EmpreendimentoResource extends JsonResource
             'id' => (string)$this->id,
             'nome' => $this->nome,
             'responsavel' => $this->responsavel,
-            'setor' => Empreendimento::where('id', '=',$this->setor)->with('setor')->first(),   
+            'setor' => Empreendimento::where('setor', $this->setor)->with('setor')->first(),  
             'natureza_empreendimento' => Empreendimento::where('natureza_empreendimento', '=',$this->natureza_empreendimento)->with('natureza_empreendimento')->first(),   
             'obras' => ObraResource::collection(Obra::where('empreendimento',  $this->id)->with('empreendimento')->get()),
-            'user' =>  Empreendimento::where('id', '=',$this->user)->with('user')->first(),    
+            'user' =>  Empreendimento::where('user',$this->user)->with('user')->first(),    
             'status' => $this->status,
         ];
     }
