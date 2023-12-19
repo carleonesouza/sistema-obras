@@ -19,7 +19,7 @@ class TipoUsuarioController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Tipo Usuário']);
+        //Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Tipo Usuário']);
         return TipoUsuarioResource::collection(TipoUsuario::all());
     }
 

@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'store']);
+Route::get('/perfil', [TipoUsuarioController::class, 'index']);
 
 // Protected routes for ADMIN
 Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
