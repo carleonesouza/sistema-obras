@@ -125,6 +125,37 @@ class ObraController extends Controller
         return ObraResource::make($obra);
     }
 
+    public function search(Request $request)
+    {
+        // Validate the search term
+        $validatedData = $request->validate([
+            'term' => 'required|string|max:255', // Adjust validation rules as needed
+        ]);
+        $searchTerm = $validatedData['term'];
+    
+        $user = Auth::user();
+        
+        Log::channel('user_activity')->info('User action', [
+            'user' => $user->email,
+            'Listou' => 'Obra'
+        ]);
+    
+        // Use Eloquent's when() method for conditional clauses
+        $query = Obra::when($user->hasRole('ADMIN'), function ($query) use ($searchTerm) {
+            return $query->where('tipo', 'LIKE', "%{$searchTerm}%");
+        }, function ($query) use ($user, $searchTerm) {
+            return $query->where('user', $user->id)
+                         ->where('tipo', 'LIKE', "%{$searchTerm}%")
+                         ->with(['produtos', 'municipios']);
+        });
+    
+        // Consider adding pagination
+        $items = $query->paginate(15); // Or any number that suits your application
+    
+        return ObraResource::collection($items);
+    }
+    
+
 
     /**
      * Update the specified resource in storage.

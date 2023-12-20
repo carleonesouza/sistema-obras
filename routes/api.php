@@ -44,6 +44,7 @@ Route::get('/perfil', [TipoUsuarioController::class, 'index']);
 // Protected routes for ADMIN
 Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/search', [ObraController::class, 'search']);
     Route::apiResource('/usuarios', UserController::class);
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/common-users', CommonUserController::class);

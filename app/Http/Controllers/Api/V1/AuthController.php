@@ -51,31 +51,30 @@ class AuthController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-
         try {
-            if ($request->validated()) {
-
-                $user = User::create([
-                    'nome' => $request->nome,
-                    'instituicao_setor' => $request->instituicao_setor,
-                    'telefone' => $request->telefone,
-                    'email' => $request->email,
-                    'tipo_usuario' => $request->tipo_usuario,
-                    'senha' => Hash::make($request->senha),
-                ]);
-            }
-
-            return [
+            $user = User::create([
+                'nome' => $request->nome,
+                'instituicao_setor' => $request->instituicao_setor,
+                'telefone' => $request->telefone,
+                'email' => $request->email,
+                'tipo_usuario' => $request->tipo_usuario,
+                'senha' => Hash::make($request->senha),
+            ]);
+    
+            $user->load('tipoUsuario');
+            $token = $user->createToken($user->email)->plainTextToken;
+    
+            return response()->json([
                 'user' => $user,
                 'tipo_usuario' => $user->tipoUsuario,
-                'token' => $user->createToken($user->email)->plainTextToken
-            ];
+                'token' => $token
+            ]);
         } catch (Exception $e) {
-            Log::error('Error creating user : ' . $e->getMessage());
-            return response()->json(['message' => 'Erro ao cadastrar sua conta: '] . $e->getMessage(), 400);
+            Log::error('Error creating user: ' . $e->getMessage());
+            return response()->json(['message' => 'Erro ao cadastrar sua conta: ' . $e->getMessage()], 400);
         }
     }
-
+   
     public function logout()
     {
         $user = request()->user();
