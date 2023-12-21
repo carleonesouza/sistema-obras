@@ -96,7 +96,7 @@ class ObraController extends Controller
 
             Log::error('Error creating Obra: ' . $e->getMessage());
 
-            return response()->json('Falha ao Criar Obra: ' . $e->getMessage(), 500);
+            return response()->json(['message'=> 'Falha ao Criar Obra: ' . $e->getMessage()], 500);
         }
     }
 
@@ -119,7 +119,7 @@ class ObraController extends Controller
 
 
         if (!$obra) {
-            return response()->json('Obra não Encontrada', 404);
+            return response()->json(['message'=>'Obra não Encontrada'], 404);
         }
 
         return ObraResource::make($obra);
@@ -155,8 +155,6 @@ class ObraController extends Controller
         return ObraResource::collection($items);
     }
     
-
-
     /**
      * Update the specified resource in storage.
      *

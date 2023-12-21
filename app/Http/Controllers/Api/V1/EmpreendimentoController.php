@@ -81,7 +81,7 @@ class EmpreendimentoController extends Controller
             Log::error('Error creating Empreendimento: ' . $e->getMessage());
 
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao criar Empreendimento: ' . $e->getMessage(), 500);
+            return response()->json(['message'=>'Falha ao criar Empreendimento: ' . $e->getMessage()], 500);
         }
         
     }
@@ -100,11 +100,41 @@ class EmpreendimentoController extends Controller
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
 
         if (!$empreendimento) {
-            return response()->json('Empreendimento não Encontrada', 404);
+            return response()->json(['message'=>'Empreendimento não Encontrada'], 404);
         }
 
         return new EmpreendimentoResource($empreendimento);
     }
+
+    public function search(Request $request)
+    {
+        // Validate the search term
+        $validatedData = $request->validate([
+            'term' => 'required|string|max:255', // Adjust validation rules as needed
+        ]);
+        $searchTerm = $validatedData['term'];
+    
+        $user = Auth::user();
+        
+        Log::channel('user_activity')->info('User action', [
+            'user' => $user->email,
+            'Listou' => 'Empreendimento'
+        ]);
+    
+        // Use Eloquent's when() method for conditional clauses
+        $query = Empreendimento::when($user->hasRole('ADMIN'), function ($query) use ($searchTerm) {
+            return $query->where('nome', 'LIKE', "%{$searchTerm}%");
+        }, function ($query) use ($user, $searchTerm) {
+            return $query->where('user', $user->id)
+                         ->where('nome', 'LIKE', "%{$searchTerm}%");
+        });
+    
+        // Consider adding pagination
+        $items = $query->paginate(15); // Or any number that suits your application
+    
+        return EmpreendimentoResource::collection($items);
+    }
+    
 
     /**
      * Update the specified resource in storage.

@@ -59,7 +59,7 @@ class TipoInfraestruturaController extends Controller
             Log::error('Error creating Tipo Infraestrutura: ' . $e->getMessage());
 
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao criar Tipo Infraestrutura: ' . $e->getMessage(), 500);
+            return response()->json(['message'=> 'Falha ao criar Tipo Infraestrutura: ' . $e->getMessage()], 500);
         }
     }
 
@@ -76,10 +76,37 @@ class TipoInfraestruturaController extends Controller
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Tipo Infraestrutura pelo ID']);
 
         if (!$tipoInfra) {
-            return response()->json('Tipo Infraestrutura não Encontrada', 404);
+            return response()->json(['message' => 'Tipo Infraestrutura não Encontrada!'], 404);
         }
         return new TipoInfraestruturaResource($tipoInfra);
     }
+
+    public function search(Request $request)
+    {
+        // Validate the request
+        $validatedData = $request->validate([
+            'term' => 'required|string|max:255',
+        ]);
+        $searchTerm = $validatedData['term'];
+    
+        // Retrieve the authenticated user
+        $user = Auth::user();
+        
+        // Log the user action
+        Log::channel('user_activity')->info('User action', [
+            'user' => $user->email,
+            'action' => 'Search',
+            'searchTerm' => $searchTerm,
+            'context' => 'TipoInfraestrutura'
+        ]);
+    
+        // Perform the search query
+        $items = TipoInfraestrutura::where('descricao', 'LIKE', "%{$searchTerm}%")
+                                   ->paginate(15);
+    
+        // Return the paginated results as a resource collection
+        return TipoInfraestruturaResource::collection($items);
+    }    
 
     /**
      * Update the specified resource in storage.

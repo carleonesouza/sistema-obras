@@ -44,7 +44,11 @@ Route::get('/perfil', [TipoUsuarioController::class, 'index']);
 // Protected routes for ADMIN
 Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/search', [ObraController::class, 'search']);
+    Route::get('/obras/search', [ObraController::class, 'search']);
+    Route::get('/empreendimentos/search', [EmpreendimentoController::class, 'search']);
+    Route::get('/tipos-infra/search', [TipoInfraestruturaController::class, 'search']);
+    Route::get('/intervencoes/search', [IntervencaoController::class, 'search']);
+    Route::get('/iniciativas/search', [IniciativaController::class, 'search']);
     Route::apiResource('/usuarios', UserController::class);
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/common-users', CommonUserController::class);
@@ -76,6 +80,10 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
 // Protected routes for others
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/obras/search', [ObraController::class, 'search']);
+    Route::get('/empreendimentos/search', [EmpreendimentoController::class, 'search']);
+    Route::get('/tipos-infra/search', [TipoInfraestruturaController::class, 'search']);
+    Route::get('/iniciativas/search', [IniciativaController::class, 'search']);
     Route::apiResource('/common-users', CommonUserController::class);
     Route::apiResource('/tipo-usuarios', TipoUsuarioController::class);
     Route::apiResource('/setores', SetorController::class);
