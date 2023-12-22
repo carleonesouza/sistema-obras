@@ -28,7 +28,6 @@ class StoreIniciativaRequest extends FormRequest
             'responsavel' => ['required', 'string', 'max:200'],
             'descricao'=> ['required', 'string', 'max:800'],
             'expectativa'=> ['required', 'string', 'max:200'],          
-            'instrumento' => ['required','string', 'max:200'],
             'setor'=>['required'],
             'user' =>['required'],
             'status'=> ['required']

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('responsavel');
             $table->string('descricao');
             $table->string('expectativa');
-            $table->string('instrumento');
+            $table->string('instrumento')->nullable();
             $table->foreignId('user')->references('id')->on('users');
             $table->unsignedBigInteger('status')->nullable();
             $table->foreign('status')->references('id')->on('statuses');

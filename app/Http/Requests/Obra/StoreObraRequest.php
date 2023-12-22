@@ -34,8 +34,7 @@ class StoreObraRequest extends FormRequest
             'dataConclusao' => ['required'],
             'status' => ['required'],
             'user' => ['required'],
-            'data_base_orcamento' => ['required'],
-            'instrumento' => ['required'],
+            'data_base_orcamento' => ['required']
         ];
     }
 }

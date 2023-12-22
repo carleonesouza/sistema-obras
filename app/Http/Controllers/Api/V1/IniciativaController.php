@@ -139,32 +139,28 @@ class IniciativaController extends Controller
     {
         try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Iniciativa pelo ID']);
-
-
+    
             $user = Auth::user();
-
+    
             if ($user->hasRole('ADMIN')) {
-
                 $iniciativa = Iniciativa::find($request->id);
             } else {
-
-                $iniciativa = Iniciativa::where('user', $user->id)->get();
+                $iniciativa = Iniciativa::where('user', $user->id)->where('id', $request->id)->first();
             }
-
+    
             if ($iniciativa) {
-
                 $iniciativa->update($request->all());
-
+    
                 return IniciativaResource::make($iniciativa);
+            } else {
+                // Handle the case where Iniciativa is not found
+                return response()->json('Iniciativa not found', 404);
             }
         } catch (Exception $e) {
-            // Log the exception for debugging purposes.
             Log::error('Error updating iniciativa: ' . $e->getMessage());
-
-            // Return an error response or handle the error as needed.
             return response()->json('Falha ao atualizar iniciativa: ' . $e->getMessage(), 500);
         }
-    }
+    }   
 
     /**
      * Remove the specified resource from storage.

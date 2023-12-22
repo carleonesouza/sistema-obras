@@ -96,7 +96,7 @@ class ObraController extends Controller
 
             Log::error('Error creating Obra: ' . $e->getMessage());
 
-            return response()->json(['message'=> 'Falha ao Criar Obra: ' . $e->getMessage()], 500);
+            return response()->json('Falha ao Criar Obra: ' . $e->getMessage(), 500);
         }
     }
 
@@ -207,7 +207,7 @@ class ObraController extends Controller
             return ObraResource::make($obra->load(['produtos', 'municipios']));
         } catch (Exception $e) {
             Log::error('Error updating Obra: ' . $e->getMessage());
-            return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
+            return response()->json(['message' =>'Falha ao atualizar Obra: ' . $e->getMessage()], 500);
         }
     }
 

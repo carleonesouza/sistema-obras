@@ -80,7 +80,7 @@ class EmpreendimentoController extends Controller
             Log::error('Error creating Empreendimento: ' . $e->getMessage());
 
             // Return an error response or handle the error as needed.
-            return response()->json(['message' => 'Falha ao criar Empreendimento: ' . $e->getMessage()], 500);
+            return response()->json('Falha ao criar Empreendimento: ' . $e->getMessage(), 500);
         }
     }
 
@@ -144,31 +144,38 @@ class EmpreendimentoController extends Controller
     public function update(UpdateEmpreendimentoRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Atualizou' => 'Empreendimento pelo ID']);
+            Log::channel('user_activity')->info('User action', [
+                'user' => Auth::user()->email, 
+                'Atualizou' => 'Empreendimento pelo ID'
+            ]);
 
             $user = Auth::user();
+            
+          
 
             if ($user->hasRole('ADMIN')) {
                 $empreendimento = Empreendimento::find($request->id);
             } else {
-
-                $empreendimento = Empreendimento::where('user', $user->id)->get();
+                $empreendimento = Empreendimento::where('user', $user->id)
+                                                ->where('id', $request->id)
+                                                ->first();
             }
-
+    
             if ($empreendimento) {
-
+            
                 $empreendimento->update($request->all());
-
+    
                 return EmpreendimentoResource::make($empreendimento);
+            } else {
+                // Handle the case where Empreendimento is not found
+                return response()->json(['message' => 'Empreendimento not found'], 404);
             }
         } catch (Exception $e) {
-            // Log the exception for debugging purposes.
             Log::error('Error updating Empreendimento: ' . $e->getMessage());
-
-            // Return an error response or handle the error as needed.
-            return response()->json(['message' =>'Falha ao atualizar Empreendimento: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Falha ao atualizar Empreendimento: ' . $e->getMessage()], 500);
         }
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -215,7 +222,7 @@ class EmpreendimentoController extends Controller
             if ($user->hasRole('ADMIN')) {
                 $empreendimentos = Empreendimento::where('setor', $setor)->get();
             } else {
-                $empreendimentos = Empreendimento::where('user_id', $user->id)
+                $empreendimentos = Empreendimento::where('user', $user->id)
                     ->where('setor', $setor)
                     ->get();
             }
