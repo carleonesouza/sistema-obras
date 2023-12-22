@@ -23,18 +23,18 @@ class EmpreendimentoController extends Controller
     public function index(Request $request)
     {
         Log::channel('user_activity')->info('User action', [
-            'user' => Auth::user()->email, 
+            'user' => Auth::user()->email,
             'Listou' => 'Empreendimentos'
         ]);
-    
+
         $user = Auth::user();
-    
+
         // Retrieve itemsPerPage from request, set default to 15 if not provided
         $itemsPerPage = $request->input('itemsPerPage', 10);
-    
+
         // Optional: Validate or limit itemsPerPage to prevent unreasonable values
         $itemsPerPage = max(1, min($itemsPerPage, 100)); // Ensures it's between 1 and 100
-    
+
         if ($user->hasRole('ADMIN')) {
             // Eager load relationships if necessary and paginate
             $empreendimentos = Empreendimento::paginate($itemsPerPage);
@@ -42,9 +42,9 @@ class EmpreendimentoController extends Controller
             // Eager load relationships if necessary, filter by user, and paginate
             $empreendimentos = Empreendimento::where('user', $user->id)->paginate($itemsPerPage);
         }
-    
+
         return EmpreendimentoResource::collection($empreendimentos);
-    }   
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -55,35 +55,33 @@ class EmpreendimentoController extends Controller
     public function store(StoreEmpreendimentoRequest $request)
     {
 
-        try{
+        try {
             Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Empreendimento']);
 
-        $validated = $request->validated();
+            $validated = $request->validated();
 
-        if (!$validated['natureza_empreendimento']) {
+            if (!$validated['natureza_empreendimento']) {
 
-            return response()->json(['message' => 'Bad Request'], 400);
-        }
-               
-        $empreendimento = Empreendimento::create([
-            'nome' => $request->nome,
-            'responsavel' => $request->responsavel,
-            'setor' => $request->setor,
-            'natureza_empreendimento' => $request->natureza_empreendimento,
-            'user' => $request->user,
-            'status' =>$request->status
-        ]);
+                return response()->json(['message' => 'Bad Request'], 400);
+            }
 
-        return EmpreendimentoResource::make($empreendimento);
-            
-        }catch(Exception $e) {
+            $empreendimento = Empreendimento::create([
+                'nome' => $request->nome,
+                'responsavel' => $request->responsavel,
+                'setor' => $request->setor,
+                'natureza_empreendimento' => $request->natureza_empreendimento,
+                'user' => $request->user,
+                'status' => $request->status
+            ]);
+
+            return EmpreendimentoResource::make($empreendimento);
+        } catch (Exception $e) {
             // Log the exception for debugging purposes.
             Log::error('Error creating Empreendimento: ' . $e->getMessage());
 
             // Return an error response or handle the error as needed.
-            return response()->json(['message'=>'Falha ao criar Empreendimento: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Falha ao criar Empreendimento: ' . $e->getMessage()], 500);
         }
-        
     }
 
     /**
@@ -100,7 +98,7 @@ class EmpreendimentoController extends Controller
         Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
 
         if (!$empreendimento) {
-            return response()->json(['message'=>'Empreendimento não Encontrada'], 404);
+            return response()->json(['message' => 'Empreendimento não Encontrado'], 404);
         }
 
         return new EmpreendimentoResource($empreendimento);
@@ -113,28 +111,28 @@ class EmpreendimentoController extends Controller
             'term' => 'required|string|max:255', // Adjust validation rules as needed
         ]);
         $searchTerm = $validatedData['term'];
-    
+
         $user = Auth::user();
-        
+
         Log::channel('user_activity')->info('User action', [
             'user' => $user->email,
             'Listou' => 'Empreendimento'
         ]);
-    
+
         // Use Eloquent's when() method for conditional clauses
         $query = Empreendimento::when($user->hasRole('ADMIN'), function ($query) use ($searchTerm) {
             return $query->where('nome', 'LIKE', "%{$searchTerm}%");
         }, function ($query) use ($user, $searchTerm) {
             return $query->where('user', $user->id)
-                         ->where('nome', 'LIKE', "%{$searchTerm}%");
+                ->where('nome', 'LIKE', "%{$searchTerm}%");
         });
-    
+
         // Consider adding pagination
         $items = $query->paginate(15); // Or any number that suits your application
-    
+
         return EmpreendimentoResource::collection($items);
     }
-    
+
 
     /**
      * Update the specified resource in storage.
@@ -168,7 +166,7 @@ class EmpreendimentoController extends Controller
             Log::error('Error updating Empreendimento: ' . $e->getMessage());
 
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao atualizar Empreendimento: ' . $e->getMessage(), 500);
+            return response()->json(['message' =>'Falha ao atualizar Empreendimento: ' . $e->getMessage()], 500);
         }
     }
 
@@ -186,19 +184,45 @@ class EmpreendimentoController extends Controller
 
         if (!$empreendimento) {
             // Empreendimento with the specified ID was not found.
-            return response()->json('Empreendimento não encontrada!', 404);
+            return response()->json(['message' => 'Empreendimento não encontrado!'], 404);
         }
 
         return response()->noContent();
     }
 
+    /**
+     * Retrieves empreendimentos filtered by setor.
+     * 
+     * @param string $setor The sector to filter empreendimentos.
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function empreendimentoBySetor($setor)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => ' Empreendimentos']);
+        // Log user activity
+        Log::channel('user_activity')->info('User action', [
+            'user' => Auth::user()->email,
+            'Listou' => 'Empreendimentos'
+        ]);
 
-        $empreendimentos = Empreendimento::where('setor', $setor)->get();
-        
+        // Validate setor
+        if (!is_string($setor) || empty($setor)) {
+            return response()->json(['message' => 'Empreendimento não encontrado!'], 404);
+        }
+
+        $user = Auth::user();
+
+        try {
+            if ($user->hasRole('ADMIN')) {
+                $empreendimentos = Empreendimento::where('setor', $setor)->get();
+            } else {
+                $empreendimentos = Empreendimento::where('user_id', $user->id)
+                    ->where('setor', $setor)
+                    ->get();
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Empreendimento não encontrado! '. $e->getMessage()], 404);
+        }
+
         return EmpreendimentoResource::collection($empreendimentos);
-
     }
 }
