@@ -8,6 +8,7 @@ use App\Http\Requests\Setors\UpdateSetorRequest;
 use App\Http\Requests\Users\DeleteUserRequest;
 use App\Http\Resources\SetorResource;
 use App\Models\Setor;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +23,7 @@ class SetorController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listou Setores']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Setores', 'date' => Carbon::now()->toDateTimeString()]);
         return SetorResource::collection(Setor::all());
     }
 
@@ -34,7 +35,7 @@ class SetorController extends Controller
      */
     public function store(StoreSetorRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Setor']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Setor', 'date' => Carbon::now()->toDateTimeString()]);
         $tipoUsuario = Setor::create($request->validated());
         return SetorResource::make($tipoUsuario);
     }
@@ -47,7 +48,7 @@ class SetorController extends Controller
      */
     public function show($id)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Setor pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Setor pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         $setor = Setor::find($id);
     
@@ -68,7 +69,7 @@ class SetorController extends Controller
     public function update(UpdateSetorRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Setor pelo ID']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Setor pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
             
             $setor = Setor::find($request->id);
 
@@ -96,7 +97,7 @@ class SetorController extends Controller
      */
     public function destroy(DeleteUserRequest $request, Setor $setor)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Setor pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Setor pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
         // Attempt to find the user by ID.
         $setor::where('id', $request->id)->delete();
     

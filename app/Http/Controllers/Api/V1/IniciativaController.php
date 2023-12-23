@@ -8,6 +8,7 @@ use App\Http\Requests\Iniciativas\StoreIniciativaRequest;
 use App\Http\Requests\Iniciativas\UpdateIniciativaRequest;
 use App\Models\Iniciativa;
 use App\Http\Resources\IniciativaResource;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class IniciativaController extends Controller
      */
     public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Iniciativa']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listar Iniciativa', 'date' => Carbon::now()->toDateTimeString()]);
 
 
 
@@ -55,7 +56,7 @@ class IniciativaController extends Controller
     {
 
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Iniciativa']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Iniciativa', 'date' => Carbon::now()->toDateTimeString()]);
 
 
             $iniciativa = Iniciativa::create([
@@ -87,7 +88,7 @@ class IniciativaController extends Controller
      */
     public function show($id)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Iniciativa pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Iniciativa pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         $iniciativa = Iniciativa::find($id);
 
@@ -109,9 +110,10 @@ class IniciativaController extends Controller
     
         $user = Auth::user();
         
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => $user->email,
-            'Listou' => 'Iniciativa'
+            'action' => 'Listou Iniciativa',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
     
         // Use Eloquent's when() method for conditional clauses
@@ -138,7 +140,7 @@ class IniciativaController extends Controller
     public function update(UpdateIniciativaRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Iniciativa pelo ID']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Iniciativa pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
     
             $user = Auth::user();
     
@@ -170,7 +172,7 @@ class IniciativaController extends Controller
      */
     public function destroy(DeleteIniciativaRequest $request, Iniciativa $iniciativa)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Iniciativa pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Iniciativa pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
         // Attempt to find the user by ID.
         $iniciativa::where('id', $request->id)->delete();
 

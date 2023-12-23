@@ -7,6 +7,7 @@ use App\Http\Requests\SimNao\StoreSimNaoRequest;
 use App\Http\Requests\SimNao\UpdateSimNaoRequest;
 use App\Http\Resources\SimNaoResource;
 use App\Models\SimNao;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class SimNaoController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Sim Nao']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Sim Nao', 'date' => Carbon::now()->toDateTimeString()]);
         return SimNaoResource::collection(SimNao::all());
     }
 
@@ -34,7 +35,7 @@ class SimNaoController extends Controller
     public function store(StoreSimNaoRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Sim Nao']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Sim Nao', 'date' => Carbon::now()->toDateTimeString()]);
             $sim_nao = SimNao::create($request->validated());
             return SimNaoResource::make($sim_nao);
             
@@ -57,7 +58,7 @@ class SimNaoController extends Controller
     {
         $sim_nao = SimNao::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Sim Nao pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Sim Nao pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$sim_nao) {
             return response()->json('Tipo Estrutura não Sim Nao', 404);

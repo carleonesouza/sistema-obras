@@ -7,6 +7,7 @@ use App\Http\Requests\Status\StoreStatusRequest;
 use App\Http\Requests\Status\UpdateStatusRequest;
 use App\Http\Resources\StatusResource;
 use App\Models\Status;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class StatusController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Funcao Estrutura']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Status', 'date' => Carbon::now()->toDateTimeString()]);
         return StatusResource::collection(Status::all());
     }
 
@@ -33,7 +34,7 @@ class StatusController extends Controller
     public function store(StoreStatusRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Status']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Status', 'date' => Carbon::now()->toDateTimeString()]);
             $status = Status::create($request->validated());
             return StatusResource::make($status);
             
@@ -56,7 +57,7 @@ class StatusController extends Controller
     {
         $status = Status::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Status pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Status pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$status) {
             return response()->json('Status não Encontrada', 404);

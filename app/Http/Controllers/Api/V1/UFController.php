@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UFRequest;
 use App\Http\Resources\UFResource;
 use App\Models\UF;
+use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -20,7 +20,7 @@ class UFController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Estados']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Estados', 'date' => Carbon::now()->toDateTimeString()]);
         return UFResource::collection(UF::all());
     }
 
@@ -35,7 +35,7 @@ class UFController extends Controller
 
         try {
             
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Estado']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Estado', 'date' => Carbon::now()->toDateTimeString()]);
             $tipoInfra = UF::create($request->validated());
             return UFResource::make($tipoInfra);
 
@@ -58,7 +58,7 @@ class UFController extends Controller
     {
         $uf = UF::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Estado pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Estado pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$uf) {
             return response()->json('Estado não Encontrado', 404);

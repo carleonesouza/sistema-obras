@@ -7,6 +7,7 @@ use App\Http\Requests\Municipios\StoreMunicipioRequest;
 use App\Http\Requests\Municipios\UpdateMunicipioRequest;
 use App\Models\Municipio;
 use App\Http\Resources\MunicipioResource;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class MunicipioController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Municipios']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Municipios', 'date' => Carbon::now()->toDateTimeString()]);
         return MunicipioResource::collection(Municipio::all());
     }
 
@@ -33,7 +34,7 @@ class MunicipioController extends Controller
     public function store(StoreMunicipioRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Municipio']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Municipio', 'date' => Carbon::now()->toDateTimeString()]);
 
             $request->validated();
 
@@ -63,7 +64,7 @@ class MunicipioController extends Controller
     {
         $municipio = Municipio::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Municipio pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Municipio pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$municipio) {
             return response()->json('Municipio não Encontrada', 404);

@@ -29,7 +29,7 @@ return [
     | your application ready for upcoming major versions of dependencies.
     |
     */
-      
+
     'deprecations' => [
         'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
         'trace' => false,
@@ -85,7 +85,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
             ],
         ],
 
@@ -121,6 +121,11 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/user_activity.log'),
             'level' => 'info',
+            'formatter' => \Monolog\Formatter\LineFormatter::class,
+            'formatter_with' => [
+                'format' => "[%datetime%] %channel%.%level_name%: %message% %context%\n",
+                'dateFormat' => 'Y-m-d H:i:s',
+            ],
         ],
     ],
 

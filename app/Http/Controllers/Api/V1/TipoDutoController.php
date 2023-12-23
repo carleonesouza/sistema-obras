@@ -7,6 +7,7 @@ use App\Http\Requests\TipoDuto\StoreTipoDutoRequest;
 use App\Http\Requests\TipoDuto\UpdateTipoDutoRequest;
 use App\Http\Resources\TipoDutoResource;
 use App\Models\TipoDuto;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class TipoDutoController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Tipo Duto']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Tipo Duto', 'date' => Carbon::now()->toDateTimeString()]);
         return TipoDutoResource::collection(TipoDuto::all());
     }
 
@@ -33,7 +34,7 @@ class TipoDutoController extends Controller
     public function store(StoreTipoDutoRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Tipo Duto']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Duto', 'date' => Carbon::now()->toDateTimeString()]);
             $duto = TipoDuto::create($request->validated());
             return TipoDutoResource::make($duto);
             
@@ -56,7 +57,7 @@ class TipoDutoController extends Controller
     {
         $duto = TipoDuto::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Tipo Duto pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Tipo Duto pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$duto) {
             return response()->json('Tipo Duto não Encontrada', 404);

@@ -7,6 +7,7 @@ use App\Http\Requests\NivelDuto\StoreNivelDutoRequest;
 use App\Http\Requests\NivelDuto\UpdateNivelDutoRequest;
 use App\Http\Resources\NivelDutoResource;
 use App\Models\NivelDuto;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class NivelDutoController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Nivel Duto']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Nivel Duto', 'date' => Carbon::now()->toDateTimeString()]);
         return NivelDutoResource::collection(NivelDuto::all());
     }
 
@@ -34,7 +35,7 @@ class NivelDutoController extends Controller
     public function store(StoreNivelDutoRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Nivel Duto']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Nivel Duto', 'date' => Carbon::now()->toDateTimeString()]);
             $estrutura = NivelDuto::create($request->validated());
             return NivelDutoResource::make($estrutura);
             
@@ -57,7 +58,7 @@ class NivelDutoController extends Controller
     {
         $nivel_duto = NivelDuto::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Nivel Duto pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Nivel Duto pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$nivel_duto) {
             return response()->json('Nivel Duto não Encontrada', 404);

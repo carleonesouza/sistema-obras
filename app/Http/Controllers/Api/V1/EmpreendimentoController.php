@@ -11,6 +11,7 @@ use App\Http\Resources\EmpreendimentoResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EmpreendimentoController extends Controller
@@ -22,9 +23,10 @@ class EmpreendimentoController extends Controller
      */
     public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => Auth::user()->email,
-            'Listou' => 'Empreendimentos'
+            'action' => 'Listou Empreendimentos',
+            'date' => Carbon::now()->toDateTimeString() 
         ]);
 
         $user = Auth::user();
@@ -56,7 +58,12 @@ class EmpreendimentoController extends Controller
     {
 
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Empreendimento']);
+            
+            Log::channel('user_activity')->info('action', [
+                'user' => Auth::user()->email, 
+                'action' => 'Criou Empreendimento',
+                'date' => Carbon::now()->toDateTimeString() 
+            ]);
 
             $validated = $request->validated();
 
@@ -95,7 +102,8 @@ class EmpreendimentoController extends Controller
         $empreendimento = Empreendimento::with('user')->find($id);
 
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Empreendimento pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Empreendimento pelo ID',
+        'date' => Carbon::now()->toDateTimeString() ]);
 
         if (!$empreendimento) {
             return response()->json(['message' => 'Empreendimento não Encontrado'], 404);
@@ -114,9 +122,10 @@ class EmpreendimentoController extends Controller
 
         $user = Auth::user();
 
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => $user->email,
-            'Listou' => 'Empreendimento'
+            'action' => 'Listou Empreendimento',
+            'date' => Carbon::now()->toDateTimeString() 
         ]);
 
         // Use Eloquent's when() method for conditional clauses
@@ -144,9 +153,10 @@ class EmpreendimentoController extends Controller
     public function update(UpdateEmpreendimentoRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', [
+            Log::channel('user_activity')->info('action', [
                 'user' => Auth::user()->email, 
-                'Atualizou' => 'Empreendimento pelo ID'
+                'action' => 'Atualizou Empreendimento pelo ID',
+                'date' => Carbon::now()->toDateTimeString() 
             ]);
 
             $user = Auth::user();
@@ -185,7 +195,8 @@ class EmpreendimentoController extends Controller
      */
     public function destroy(DeleteEmpreendimentoRequest $request, Empreendimento $empreendimento)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Deletou' => 'Empreendimento pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Empreendimento pelo ID',
+        'date' => Carbon::now()->toDateTimeString() ]);
         // Attempt to find the empreendimento by ID.
         $empreendimento::where('id', $request->id)->delete();
 
@@ -206,9 +217,10 @@ class EmpreendimentoController extends Controller
     public function empreendimentoBySetor($setor)
     {
         // Log user activity
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => Auth::user()->email,
-            'Listou' => 'Empreendimentos'
+            'action' => 'Listou Empreendimentos',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
 
         // Validate setor

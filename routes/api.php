@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\FuncaoEstruturaController;
 use App\Http\Controllers\Api\V1\HandleUploadController;
 use App\Http\Controllers\Api\V1\IniciativaController;
 use App\Http\Controllers\Api\V1\IntervencaoController;
+use App\Http\Controllers\Api\V1\LogController;
 use App\Http\Controllers\Api\V1\NaturezaEmpreendimentoController;
 use App\Http\Controllers\Api\V1\NivelDutoController;
 use App\Http\Controllers\Api\V1\ObraController;
@@ -50,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:ADMIN']], function () {
     Route::get('/intervencoes/search', [IntervencaoController::class, 'search']);
     Route::get('/iniciativas/search', [IniciativaController::class, 'search']);
     Route::apiResource('/usuarios', UserController::class);
+    Route::apiResource('/logs', LogController::class);
     Route::apiResource('/setores', SetorController::class);
     Route::apiResource('/common-users', CommonUserController::class);
     Route::apiResource('/iniciativas', IniciativaController::class);

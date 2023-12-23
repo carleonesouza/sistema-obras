@@ -12,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class CommonUserController extends Controller
 {
@@ -24,7 +25,7 @@ class CommonUserController extends Controller
     public function show($userId)
     {
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Usuário pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Usuário pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         $user = User::find($userId);
 
@@ -45,7 +46,7 @@ class CommonUserController extends Controller
     public function update(UpdateUserRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
             $user = User::find($request->id);
 

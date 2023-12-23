@@ -9,6 +9,7 @@ use App\Http\Requests\Obra\UpdateObraRequest;
 use App\Http\Resources\ObraResource;
 use App\Models\Municipio;
 use App\Models\Obra;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,9 +25,10 @@ class ObraController extends Controller
      */
     public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => Auth::user()->email,
-            'Listou' => 'Obra'
+            'action' => 'Listou Obra',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
 
         $user = Auth::user();
@@ -61,9 +63,10 @@ class ObraController extends Controller
         DB::beginTransaction();
 
         try {
-            Log::channel('user_activity')->info('User action', [
+            Log::channel('user_activity')->info('action', [
                 'user' => Auth::user()->email,
-                'Criou' => 'Obra'
+                'action' => 'Criou Obra',
+                'date' => Carbon::now()->toDateTimeString()
             ]);
 
 
@@ -109,9 +112,10 @@ class ObraController extends Controller
      */
     public function show($id)
     {
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => Auth::user()->email,
-            'Consultou' => 'Obra pelo ID'
+            'action' => 'Consultou Obra pelo ID',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
 
         // Eager load 'produtos' relationship
@@ -135,9 +139,10 @@ class ObraController extends Controller
     
         $user = Auth::user();
         
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => $user->email,
-            'Listou' => 'Obra'
+            'action' => 'Listou Obra',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
     
         // Use Eloquent's when() method for conditional clauses
@@ -166,9 +171,10 @@ class ObraController extends Controller
     public function update(UpdateObraRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', [
+            Log::channel('user_activity')->info('action', [
                 'user' => Auth::user()->email,
-                'Atualizou' => 'Obra pelo ID'
+                'action' => 'Atualizou Obra pelo ID',
+                'date' => Carbon::now()->toDateTimeString()
             ]);
 
             $user = Auth::user();
@@ -219,7 +225,8 @@ class ObraController extends Controller
      */
     public function destroy(DeleteObraRequest $request, Obra $obra)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Deletou' => 'Obra pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Obra pelo ID',
+        'date' => Carbon::now()->toDateTimeString()]);
         // Attempt to find the empreendimento by ID.
         $obra::where('id', $request->id)->delete();
 
@@ -234,9 +241,10 @@ class ObraController extends Controller
     public function removeMunicipio($id, UpdateObraRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', [
+            Log::channel('user_activity')->info('action', [
                 'user' => Auth::user()->email,
-                'Removeu' => 'Municipio da Obra pelo ID'
+                'action' => 'Removeu Municipio da Obra pelo ID',
+                'date' => Carbon::now()->toDateTimeString()
             ]);
 
             $user = Auth::user();
@@ -268,9 +276,10 @@ class ObraController extends Controller
     public function removeProduto($id, UpdateObraRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', [
+            Log::channel('user_activity')->info('action', [
                 'user' => Auth::user()->email,
-                'Removeu' => 'Produto da Obra pelo ID'
+                'action' => 'Removeu Produto da Obra pelo ID',
+                'date' => Carbon::now()->toDateTimeString()
             ]);
 
             $user = Auth::user();

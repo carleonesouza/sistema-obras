@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\Users\StoreUserRequest;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -30,7 +30,7 @@ class AuthController extends Controller
 
             $user->load('tipoUsuario');
 
-            Log::channel('user_activity')->info('User action', ['user' => $user->email, 'action' => 'Login']);
+            Log::channel('user_activity')->info('action', ['user' => $user->email, 'action' => 'Login', 'date' => Carbon::now()->toDateTimeString()]);
 
             return [
                 'user' => $user,
@@ -52,6 +52,8 @@ class AuthController extends Controller
     public function store(StoreUserRequest $request)
     {
         try {
+
+          
             $user = User::create([
                 'nome' => $request->nome,
                 'instituicao_setor' => $request->instituicao_setor,
@@ -63,6 +65,9 @@ class AuthController extends Controller
     
             $user->load('tipoUsuario');
             $token = $user->createToken($user->email)->plainTextToken;
+
+
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Login', 'date' => Carbon::now()->toDateTimeString()]);
     
             return response()->json([
                 'user' => $user,
@@ -80,7 +85,8 @@ class AuthController extends Controller
         $user = request()->user();
         $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Logout']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Logout',
+        'date' => Carbon::now()->toDateTimeString()]);
         return $this->success([
             'message' => 'You have succesfully been logged out and your token has been removed'
         ]);

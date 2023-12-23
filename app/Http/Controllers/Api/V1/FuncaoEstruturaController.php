@@ -7,6 +7,7 @@ use App\Http\Requests\FuncaoEstrutura\StoreFuncaoEstruturaRequest;
 use App\Http\Requests\FuncaoEstrutura\UpdateFuncaoEstruturaRequest;
 use App\Http\Resources\FuncaoEstruturaResource;
 use App\Models\FuncaoEstrutura;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class FuncaoEstruturaController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Funcao Estrutura']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Funcao Estrutura', 'date' => Carbon::now()->toDateTimeString()]);
         return FuncaoEstruturaResource::collection(FuncaoEstrutura::all());
     }
 
@@ -33,7 +34,7 @@ class FuncaoEstruturaController extends Controller
     public function store(StoreFuncaoEstruturaRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Funcao Estrutura']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Funcao Estrutura', 'date' => Carbon::now()->toDateTimeString()]);
             $estrutura = FuncaoEstrutura::create($request->validated());
             return FuncaoEstruturaResource::make($estrutura);
             
@@ -56,7 +57,7 @@ class FuncaoEstruturaController extends Controller
     {
         $estrutura = FuncaoEstrutura::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Tipo Estrutura pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'ConsultouTipo Estrutura pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$estrutura) {
             return response()->json('Tipo Estrutura não Encontrada', 404);

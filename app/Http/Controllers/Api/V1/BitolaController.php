@@ -7,6 +7,7 @@ use App\Http\Requests\Bitolas\StoreBitolaRequest;
 use App\Http\Requests\Bitolas\UpdateBitolaRequest;
 use App\Http\Resources\BitolaResource;
 use App\Models\Bitola;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class BitolaController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Bitolas']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Bitolas', 'date' => Carbon::now()->toDateTimeString()]);
         return BitolaResource::collection(Bitola::all());
     }
 
@@ -33,7 +34,7 @@ class BitolaController extends Controller
     public function store(StoreBitolaRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Bitola']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Bitola', 'date' => Carbon::now()->toDateTimeString()]);
 
             $bitola = Bitola::create($request->validated());
 
@@ -58,7 +59,7 @@ class BitolaController extends Controller
     {
         $bitola = Bitola::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Bitola pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Bitola pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$bitola) {
             return response()->json('Bitola não Encontrada', 404);

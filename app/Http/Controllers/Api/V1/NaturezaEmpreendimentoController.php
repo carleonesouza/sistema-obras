@@ -7,6 +7,7 @@ use App\Http\Requests\NaturezaEmpreendimentos\StoreNaturezaEmpreendimentoRequest
 use App\Http\Requests\NaturezaEmpreendimentos\UpdateNaturezaEmpreendimentoRequest;
 use App\Http\Resources\NaturezaEmpreendimentoResource;
 use App\Models\NaturezaEmpreendimento;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,7 @@ class NaturezaEmpreendimentoController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Natureza Empreendimento']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Natureza Empreendimento', 'date' => Carbon::now()->toDateTimeString()]);
         return NaturezaEmpreendimentoResource::collection(NaturezaEmpreendimento::all());
     }
 
@@ -34,7 +35,7 @@ class NaturezaEmpreendimentoController extends Controller
     public function store(StoreNaturezaEmpreendimentoRequest $request)
     {
         try{
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Natureza Empreendimento']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Natureza Empreendimento', 'date' => Carbon::now()->toDateTimeString()]);
 
             $natureza = NaturezaEmpreendimento::create($request->validated());
 
@@ -59,7 +60,7 @@ class NaturezaEmpreendimentoController extends Controller
     {
         $natureza = NaturezaEmpreendimento::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Natureza Empreendimento pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Natureza Empreendimento pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$natureza) {
             return response()->json('Natureza Empreendimento não Encontrada', 404);

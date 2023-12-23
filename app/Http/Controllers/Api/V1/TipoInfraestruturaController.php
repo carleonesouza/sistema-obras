@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTipoInfraestruturaRequest;
 use App\Http\Requests\TipoInfraestrutura\UpdateTipoInfraestruturaRequest;
 use App\Http\Resources\TipoInfraestruturaResource;
 use App\Models\TipoInfraestrutura;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +22,10 @@ class TipoInfraestruturaController extends Controller
      */
     public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', [
+        Log::channel('user_activity')->info('action', [
             'user' => Auth::user()->email, 
-            'Listou' => 'Tipo Infraestrutura'
+            'action' => 'Listou Tipo Infraestrutura',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
     
         // Retrieve itemsPerPage from request, set default to 15 if not provided
@@ -50,7 +52,7 @@ class TipoInfraestruturaController extends Controller
 
         try {
             
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Tipo Infraestrutura']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Infraestrutura', 'date' => Carbon::now()->toDateTimeString()]);
             $tipoInfra = TipoInfraestrutura::create($request->validated());
             return TipoInfraestruturaResource::make($tipoInfra);
 
@@ -73,7 +75,7 @@ class TipoInfraestruturaController extends Controller
     {
         $tipoInfra = TipoInfraestrutura::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Tipo Infraestrutura pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Tipo Infraestrutura pelo ID','date' => Carbon::now()->toDateTimeString()]);
 
         if (!$tipoInfra) {
             return response()->json(['message' => 'Tipo Infraestrutura não Encontrada!'], 404);
@@ -92,12 +94,11 @@ class TipoInfraestruturaController extends Controller
         // Retrieve the authenticated user
         $user = Auth::user();
         
-        // Log the user action
-        Log::channel('user_activity')->info('User action', [
+        // Log the action
+        Log::channel('user_activity')->info('action', [
             'user' => $user->email,
-            'action' => 'Search',
-            'searchTerm' => $searchTerm,
-            'context' => 'TipoInfraestrutura'
+            'action' => 'Buscou Tipo Infraestutura',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
     
         // Perform the search query
@@ -133,7 +134,7 @@ class TipoInfraestruturaController extends Controller
 
     public function tipoInfraBySetor($setor)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => ' Tipo Infraestrutura']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Tipo Infraestrutura', 'date' => Carbon::now()->toDateTimeString()]);
 
         $infras = TipoInfraestrutura::where('setor', $setor)->get();
         

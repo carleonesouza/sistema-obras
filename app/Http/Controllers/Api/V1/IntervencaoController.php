@@ -7,6 +7,7 @@ use App\Http\Requests\Intervencao\StoreIntervencaoRequest;
 use App\Http\Requests\Intervencao\UpdateIntervencaoRequest;
 use App\Http\Resources\IntervencaoResource;
 use App\Models\Intervencao;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class IntervencaoController extends Controller
      */
     public function index(Request $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => 'Intervencao']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Intervencao', 'date' => Carbon::now()->toDateTimeString()]);
 
         $itemsPerPage = $request->input('itemsPerPage', 10);
 
@@ -41,7 +42,7 @@ class IntervencaoController extends Controller
     public function store(StoreIntervencaoRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Criou' => 'Intervencao']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Intervencao', 'date' => Carbon::now()->toDateTimeString()]);
             $intervecao = Intervencao::create($request->validated());
             return IntervencaoResource::make($intervecao);
         } catch (Exception $e) {
@@ -63,7 +64,7 @@ class IntervencaoController extends Controller
     {
         $intervecao = Intervencao::find($id);
 
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Consultou' => 'Intervencao pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Intervencao pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         if (!$intervecao) {
             return response()->json(['message' => 'Intervencao não Encontrada'], 404);
@@ -82,12 +83,11 @@ class IntervencaoController extends Controller
         // Retrieve the authenticated user
         $user = Auth::user();
         
-        // Log the user action
-        Log::channel('user_activity')->info('User action', [
+        // Log the action
+        Log::channel('user_activity')->info('action', [
             'user' => $user->email,
-            'action' => 'Search',
-            'searchTerm' => $searchTerm,
-            'context' => 'Intervencao'
+            'action' => 'Procurou Intervenção',
+            'date' => Carbon::now()->toDateTimeString()
         ]);
     
         // Perform the search query
@@ -123,7 +123,7 @@ class IntervencaoController extends Controller
 
     public function intervencaoBySetor($setor)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'Listou' => ' Intervenções']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Intervenções pelo Setor', 'date' => Carbon::now()->toDateTimeString()]);
 
         $intervencoes = Intervencao::where('setor', $setor)->get();
 

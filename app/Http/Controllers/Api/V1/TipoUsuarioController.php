@@ -9,6 +9,7 @@ use App\Http\Resources\TipoUsuarioResource;
 use App\Models\TipoUsuario;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class TipoUsuarioController extends Controller
 {
@@ -19,7 +20,7 @@ class TipoUsuarioController extends Controller
      */
     public function index()
     {
-        //Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar Tipo Usuário']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Tipo Usuário',  'date' => Carbon::now()->toDateTimeString()]);
         return TipoUsuarioResource::collection(TipoUsuario::all());
     }
 
@@ -31,7 +32,7 @@ class TipoUsuarioController extends Controller
      */
     public function store(StoreTipoUsuarioRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Usuário']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Usuário', 'date' => Carbon::now()->toDateTimeString()]);
         $tipoUsuario = TipoUsuario::create($request->validated());
         return TipoUsuarioResource::make($tipoUsuario);
     }
@@ -44,7 +45,7 @@ class TipoUsuarioController extends Controller
      */
     public function show(TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Tipo Usuário pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
         return TipoUsuarioResource::make($tipoUsuario);
     }
 
@@ -57,7 +58,7 @@ class TipoUsuarioController extends Controller
      */
     public function update(UpdateTipoUsuarioRequest $request, TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Tipo Usuário pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
         $tipoUsuario->update($request->validated());
         return TipoUsuarioResource::make($tipoUsuario);
 
@@ -71,7 +72,7 @@ class TipoUsuarioController extends Controller
      */
     public function destroy(TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletou Tipo Usuário pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
         $tipoUsuario->delete();
         return response()->noContent();
     }

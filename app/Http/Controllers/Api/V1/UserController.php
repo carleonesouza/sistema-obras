@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -23,7 +24,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Listar todos Usuários']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listar todos Usuários',  'date' => Carbon::now()->toDateTimeString()]);
         
         $user = Auth::user();
 
@@ -45,7 +46,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Criou Usuário']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Usuário', 'date' => Carbon::now()->toDateTimeString()]);
         $request->validated();
 
         $user = Auth::user();
@@ -77,7 +78,7 @@ class UserController extends Controller
     public function show($userId)
     {
         
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Consultou Usuário pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Usuário pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         $user = User::find($userId);
     
@@ -98,7 +99,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID']);
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Usuário pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
             
             $user = Auth::user();            
             
@@ -134,7 +135,7 @@ class UserController extends Controller
      */
     public function destroy(DeleteUserRequest $request, User $user)
     {
-        Log::channel('user_activity')->info('User action', ['user' => Auth::user()->email, 'action' => 'Deletar Usuário pelo ID']);
+        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Usuário pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
         
         // Attempt to find the user by ID.
         $user::where('id', $request->id)->delete();
