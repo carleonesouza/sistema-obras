@@ -35,9 +35,22 @@ class SetorController extends Controller
      */
     public function store(StoreSetorRequest $request)
     {
-        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Setor', 'date' => Carbon::now()->toDateTimeString()]);
-        $tipoUsuario = Setor::create($request->validated());
-        return SetorResource::make($tipoUsuario);
+        try {
+            $user = Auth::user();
+
+            if ($user->hasRole('ADMIN')) {
+                Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Setor', 'date' => Carbon::now()->toDateTimeString()]);
+                $tipoUsuario = Setor::create($request->validated());
+            } else {
+                return response()->json('Não Autorizado', 401);
+            }
+
+            return SetorResource::make($tipoUsuario);
+        } catch (Exception $e) {
+
+            Log::error('Error updating Empreendimento: ' . $e->getMessage());
+            return response()->json(['message' => 'Falha ao atualizar Empreendimento: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -51,11 +64,11 @@ class SetorController extends Controller
         Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Consultou Setor pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
 
         $setor = Setor::find($id);
-    
+
         if (!$setor) {
             return response()->json('Setor não encontrado!', 404);
         }
-    
+
         return SetorResource::make($setor);
     }
 
@@ -70,22 +83,28 @@ class SetorController extends Controller
     {
         try {
             Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Setor pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
-            
-            $setor = Setor::find($request->id);
 
-            if($setor){
-                $setor->update($request->all());
-                return SetorResource::make($setor);
+            $setor = Setor::find($request->id);
+            $user = Auth::user();
+
+            if ($user->hasRole('ADMIN')) {
+
+                if ($setor) {
+                    $setor->update($request->all());
+
+                    return SetorResource::make($setor);
+                }
+            } else {
+                return response()->json('Não Autorizado', 401);
             }
-           
+
             return throw ValidationException::withMessages(['Não foi possível atualizar o Setor']);;
-           
         } catch (Exception $e) {
             // Log the exception for debugging purposes.
             Log::error('Error updating user: ' . $e->getMessage());
-    
+
             // Return an error response or handle the error as needed.
-            return response()->json('Falha ao Atualizar Setor: '.$e->getMessage(), 500);
+            return response()->json('Falha ao Atualizar Setor: ' . $e->getMessage(), 500);
         }
     }
 
@@ -100,12 +119,12 @@ class SetorController extends Controller
         Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Setor pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
         // Attempt to find the user by ID.
         $setor::where('id', $request->id)->delete();
-    
+
         if (!$setor) {
             // User with the specified ID was not found.
-            return response()->json( 'Setor não encontrado!', 404);
+            return response()->json('Setor não encontrado!', 404);
         }
-        
+
         return response()->noContent();
     }
 }

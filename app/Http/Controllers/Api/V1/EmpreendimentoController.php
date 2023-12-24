@@ -161,8 +161,6 @@ class EmpreendimentoController extends Controller
 
             $user = Auth::user();
             
-          
-
             if ($user->hasRole('ADMIN')) {
                 $empreendimento = Empreendimento::find($request->id);
             } else {

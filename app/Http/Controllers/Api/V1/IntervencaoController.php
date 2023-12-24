@@ -42,8 +42,16 @@ class IntervencaoController extends Controller
     public function store(StoreIntervencaoRequest $request)
     {
         try {
-            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Intervencao', 'date' => Carbon::now()->toDateTimeString()]);
-            $intervecao = Intervencao::create($request->validated());
+            $user = Auth::user();
+
+            if ($user->hasRole('ADMIN')) {
+
+                Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Intervencao', 'date' => Carbon::now()->toDateTimeString()]);
+                $intervecao = Intervencao::create($request->validated());
+                
+            } else {
+                return response()->json('Não Autorizado', 401);
+            }
             return IntervencaoResource::make($intervecao);
         } catch (Exception $e) {
             // Log the exception for debugging purposes.
@@ -79,24 +87,24 @@ class IntervencaoController extends Controller
             'term' => 'required|string|max:255',
         ]);
         $searchTerm = $validatedData['term'];
-    
+
         // Retrieve the authenticated user
         $user = Auth::user();
-        
+
         // Log the action
         Log::channel('user_activity')->info('action', [
             'user' => $user->email,
             'action' => 'Procurou Intervenção',
             'date' => Carbon::now()->toDateTimeString()
         ]);
-    
+
         // Perform the search query
         $items = Intervencao::where('descricao', 'LIKE', "%{$searchTerm}%")
-                                   ->paginate(15);
-    
+            ->paginate(15);
+
         // Return the paginated results as a resource collection
         return IntervencaoResource::collection($items);
-    }    
+    }
 
     /**
      * Update the specified resource in storage.
@@ -105,9 +113,31 @@ class IntervencaoController extends Controller
      * @param  \App\Models\Intervencao  $intervencao
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateIntervencaoRequest $request, Intervencao $intervencao)
+    public function update(UpdateIntervencaoRequest $request)
     {
-        //
+        try {
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Intervenções pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
+
+            $user = Auth::user();
+
+            if ($user->hasRole('ADMIN')) {
+                $intervecao = Intervencao::find($request->id);
+            } else {
+                return response()->json('Não Autorizado', 401);
+            }
+
+            if ($intervecao) {
+                $intervecao->update($request->all());
+
+                return IntervencaoResource::make($intervecao);
+            } else {
+
+                return response()->json('Intervenções not found', 404);
+            }
+        } catch (Exception $e) {
+            Log::error('Error updating Intervenções: ' . $e->getMessage());
+            return response()->json('Falha ao atualizar Intervenções: ' . $e->getMessage(), 500);
+        }
     }
 
     /**

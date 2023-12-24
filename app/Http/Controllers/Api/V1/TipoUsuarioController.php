@@ -20,7 +20,7 @@ class TipoUsuarioController extends Controller
      */
     public function index()
     {
-        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Listou Tipo Usuário',  'date' => Carbon::now()->toDateTimeString()]);
+        Log::channel('user_activity')->info('action', ['user' => 'vazio', 'action' => 'Listou Tipo Usuário',  'date' => Carbon::now()->toDateTimeString()]);
         return TipoUsuarioResource::collection(TipoUsuario::all());
     }
 
@@ -32,8 +32,15 @@ class TipoUsuarioController extends Controller
      */
     public function store(StoreTipoUsuarioRequest $request)
     {
-        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Usuário', 'date' => Carbon::now()->toDateTimeString()]);
-        $tipoUsuario = TipoUsuario::create($request->validated());
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Usuário', 'date' => Carbon::now()->toDateTimeString()]);
+            $tipoUsuario = TipoUsuario::create($request->validated());
+        } else {
+            // Handle the case where Empreendimento is not found
+            return response()->json(['message' => 'Não Autorizado'], 401);
+        }
         return TipoUsuarioResource::make($tipoUsuario);
     }
 
@@ -58,10 +65,16 @@ class TipoUsuarioController extends Controller
      */
     public function update(UpdateTipoUsuarioRequest $request, TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
-        $tipoUsuario->update($request->validated());
-        return TipoUsuarioResource::make($tipoUsuario);
+        $user = Auth::user();
 
+        if ($user->hasRole('ADMIN')) {
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
+            $tipoUsuario->update($request->validated());
+        } else {
+            // Handle the case where Empreendimento is not found
+            return response()->json(['message' => 'Não Autorizado'], 401);
+        }
+        return TipoUsuarioResource::make($tipoUsuario);
     }
 
     /**
@@ -72,8 +85,15 @@ class TipoUsuarioController extends Controller
      */
     public function destroy(TipoUsuario $tipoUsuario)
     {
-        Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
-        $tipoUsuario->delete();
+        $user = Auth::user();
+
+        if ($user->hasRole('ADMIN')) {
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Deletou Tipo Usuário pelo ID',  'date' => Carbon::now()->toDateTimeString()]);
+            $tipoUsuario->delete();
+        } else {
+            // Handle the case where Empreendimento is not found
+            return response()->json(['message' => 'Não Autorizado'], 401);
+        }
         return response()->noContent();
     }
 }

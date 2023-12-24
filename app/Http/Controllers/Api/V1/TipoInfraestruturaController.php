@@ -51,9 +51,17 @@ class TipoInfraestruturaController extends Controller
     {
 
         try {
+            $user = Auth::user();
+            
+            if ($user->hasRole('ADMIN')) {
             
             Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Criou Tipo Infraestrutura', 'date' => Carbon::now()->toDateTimeString()]);
             $tipoInfra = TipoInfraestrutura::create($request->validated());
+
+            }else {
+                // Handle the case where Empreendimento is not found
+                return response()->json(['message' => 'Não Autorizado'], 401);
+            }
             return TipoInfraestruturaResource::make($tipoInfra);
 
         } catch (Exception $e) {
@@ -116,9 +124,31 @@ class TipoInfraestruturaController extends Controller
      * @param  \App\Models\TipoInfraestrutura  $tipoInfraestrutura
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTipoInfraestruturaRequest $request, TipoInfraestrutura $tipoInfraestrutura)
+    public function update(UpdateTipoInfraestruturaRequest $request)
     {
-        //
+        try {
+            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Atualizou Tipo Infraestrutura pelo ID', 'date' => Carbon::now()->toDateTimeString()]);
+    
+            $user = Auth::user();
+    
+            if ($user->hasRole('ADMIN')) {
+                $tipoInfra = TipoInfraestrutura::find($request->id);
+            } else {
+                return response()->json('Não Autorizado ', 401);
+            }
+    
+            if ($tipoInfra) {
+                $tipoInfra->update($request->all());
+    
+                return TipoInfraestruturaResource::make($tipoInfra);
+            } else {
+                // Handle the case where Iniciativa is not found
+                return response()->json('Tipo Infraestrutura not found', 404);
+            }
+        } catch (Exception $e) {
+            Log::error('Error updating Tipo Infraestrutura: ' . $e->getMessage());
+            return response()->json('Falha ao atualizar Tipo Infraestrutura: ' . $e->getMessage(), 500);
+        }
     }
 
     /**
