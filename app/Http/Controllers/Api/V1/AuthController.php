@@ -67,7 +67,7 @@ class AuthController extends Controller
             $token = $user->createToken($user->email)->plainTextToken;
 
 
-            Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Login', 'date' => Carbon::now()->toDateTimeString()]);
+            Log::channel('user_activity')->info('action', ['user' => $user->email, 'action' => 'Login', 'date' => Carbon::now()->toDateTimeString()]);
     
             return response()->json([
                 'user' => $user,

@@ -16,7 +16,7 @@ class Setor extends Model
 
     public function iniciativas(): HasOne
     {
-        return $this->hasOne(Iniciativas::class);
+        return $this->hasOne(Iniciativa::class);
     }
 
 }

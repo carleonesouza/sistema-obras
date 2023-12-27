@@ -3,7 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Models\Obra;
-use App\Models\User;
+use App\Models\SimNao;
+use App\Models\Situacao;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ObraResource extends JsonResource
@@ -45,8 +46,7 @@ class ObraResource extends JsonResource
             'espessura' => $this->espessura,
             'vazaoProjeto' => $this->vazaoProjeto,
             'vazaoOperacional' => $this->vazaoOperacional,
-            'novaAreaImpactada' => $this->novaAreaImpactada,
-            'situacaoHidrovia' => $this->situacaoHidrovia,
+            'novaAreaImpactada' => $this->novaAreaImpactada,            
             'tipoEmbarcacao' => $this->tipoEmbarcacao,
             'profundidadeMinima' => $this->profundidadeMinima,
             'profundidadeMaxima' => $this->profundidadeMaxima,
@@ -71,9 +71,10 @@ class ObraResource extends JsonResource
         ];
 
         $hidroviaria = $this->tipo === 'Hidroviário' ? [
-            'ampliacaoCapacidade' => Obra::where('ampliacaoCapacidade', $this->ampliacaoCapacidade)->with('sim_nao')->first(),
-            'temEclusa' => Obra::where('temEclusa', $this->temEclusa)->with('sim_nao')->first(),
-            'temBarragem' => Obra::where('temBarragem', $this->temBarragem)->with('sim_nao')->first(),
+            'ampliacaoCapacidade' => SimNao::where('id', (int) $this->ampliacaoCapacidade)->first(),
+            'temEclusa' => SimNao::where('id', (int) $this->temEclusa)->first(),
+            'temBarragem' => SimNao::where('id', (int) $this->temBarragem)->first(),
+            'situacaoHidrovia' => Situacao::where('id', (int) $this->situacaoHidrovia)->first(),
 
         ] : [];
 
@@ -82,7 +83,7 @@ class ObraResource extends JsonResource
         ] : [];
 
         $portuaria = $this->tipo === 'Portuário' ? [
-            'ampliacaoCapacidade' => Obra::where('ampliacaoCapacidade', $this->ampliacaoCapacidade)->with('sim_nao')->first(),
+            'ampliacaoCapacidade' => SimNao::where('id', (int) $this->ampliacaoCapacidade)->first(),
         ] : [];
 
         $conditionalArray = $this->tipo === 'Dutoviário' ? [
