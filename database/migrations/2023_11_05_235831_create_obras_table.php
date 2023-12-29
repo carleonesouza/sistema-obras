@@ -58,8 +58,8 @@ return new class extends Migration
 
             $table->date('data_base_orcamento')->nullable();
             $table->string('instrumento')->nullable();
-            $table->date('dataInicio');
-            $table->date('dataConclusao');
+            $table->date('dataInicio')->nullable();
+            $table->date('dataConclusao')->nullable();
             $table->string('documentosAdicionais')->nullable();
             $table->string('arquivoGeorreferenciado')->nullable();
             $table->float('valorGlobal')->nullable();

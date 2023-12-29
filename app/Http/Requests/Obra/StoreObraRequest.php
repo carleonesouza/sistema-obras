@@ -30,8 +30,6 @@ class StoreObraRequest extends FormRequest
             'empreendimento' => ['required'],
             'tipo_infraestrutura' => ['required'],
             'intervencao' => ['required'],
-            'dataInicio' => ['required'],
-            'dataConclusao' => ['required'],
             'status' => ['required'],
             'user' => ['required'],
         ];
