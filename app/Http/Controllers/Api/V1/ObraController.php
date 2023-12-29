@@ -59,50 +59,50 @@ class ObraController extends Controller
      */
     public function store(StoreObraRequest $request)
     {
-
         DB::beginTransaction();
-
+    
         try {
+            // Logging user activity
             Log::channel('user_activity')->info('action', [
                 'user' => Auth::user()->email,
                 'action' => 'Criou Obra',
                 'date' => Carbon::now()->toDateTimeString()
             ]);
-
-
+    
             // Create the Obra
-            $obraData = $request->except(['produtos', 'municipios']); // Exclude product_ids from Obra data
-
+            $obraData = $request->except(['produtos', 'municipios']);
             $obra = Obra::create($obraData);
-
+    
             // Associate Products with the newly created Obra
-            if ($request->has('produtos')) {
-
-                $productIds = collect($request->input('produtos'))->pluck('produto_id');
-                $obra->produtos()->attach($productIds);
-            }
-
-            if ($request->has('municipios')) {
-
-                foreach ($request->input('municipios') as $municipioData) {
-
-                    $municipio = Municipio::create($municipioData);
-                    $obra->municipios()->attach($municipio->id);
+            if ($request->filled('produtos')) {
+                $productIds = collect($request->input('produtos'))
+                              ->pluck('produto_id')
+                              ->filter(); // Filtra valores nulos ou vazios
+    
+                if ($productIds->isNotEmpty()) {
+                    $obra->produtos()->attach($productIds);
                 }
             }
-
+    
+            // Associate Municipalities with the newly created Obra
+            if ($request->filled('municipios')) {
+                foreach ($request->input('municipios') as $municipioData) {
+                    if (!empty($municipioData)) { // Checa se o array não está vazio
+                        $municipio = Municipio::create($municipioData);
+                        $obra->municipios()->attach($municipio->id);
+                    }
+                }
+            }
+    
             DB::commit();
-
+    
             return ObraResource::make($obra);
         } catch (Exception $e) {
             DB::rollBack();
-
             Log::error('Error creating Obra: ' . $e->getMessage());
-
             return response()->json('Falha ao Criar Obra: ' . $e->getMessage(), 500);
         }
-    }
-
+    } 
 
     /**
      * Display the specified resource.
@@ -193,11 +193,11 @@ class ObraController extends Controller
             $obra->update($data);
 
             // Update 'produtos' relationship if 'produtos' is provided
-            if ($request->has('produtos')) {
+            if ($request->filled('produtos'))  {
                 $obra->produtos()->attach($request->produtos);
             }
 
-            if ($request->has('municipios')) {
+            if ($request->filled('municipios')) {
                 foreach ($request->input('municipios') as $municipioData) {
 
                     if (!$municipioData['municipio_id']) {
@@ -213,7 +213,7 @@ class ObraController extends Controller
             return ObraResource::make($obra->load(['produtos', 'municipios']));
         } catch (Exception $e) {
             Log::error('Error updating Obra: ' . $e->getMessage());
-            return response()->json(['message' =>'Falha ao atualizar Obra: ' . $e->getMessage()], 500);
+            return response()->json('Falha ao atualizar Obra: ' . $e->getMessage(), 500);
         }
     }
 

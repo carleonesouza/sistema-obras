@@ -83,8 +83,8 @@ class Obra extends Model
         return $this->belongsTo(TipoInfraestrutura::class, 'tipo_infraestrutura');
     }
 
-    public function UF() {
-        return $this->belongsTo(UF::class, 'uf');
+    public function uf() {
+        return $this->belongsTo(UF::class, 'uf')->withDefault();
     }
 
     public function produto() {

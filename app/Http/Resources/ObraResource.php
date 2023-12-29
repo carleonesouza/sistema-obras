@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Obra;
 use App\Models\SimNao;
 use App\Models\Situacao;
+use App\Models\UF;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ObraResource extends JsonResource
@@ -67,8 +68,16 @@ class ObraResource extends JsonResource
             'tipo_infraestrutura' =>  Obra::where('tipo_infraestrutura', $this->tipo_infraestrutura)->with('tipo_infraestrutura')->first(),
             'intervencao' => Obra::where('intervencao', $this->intervencao)->with('intervencao')->first(),
             'empreendimento' => Obra::where('empreendimento', $this->empreendimento)->with('empreendimento')->first(),
-            'uf' => Obra::where('uf', $this->uf)->with('uf')->first(),
+          
         ];
+        $obra = Obra::with(['uf', 'tipo_duto', 'funcao_estrutura','nivel_duto',  'bitola'])->find($this->id);
+        $atributoUf = $obra->uf ? $obra->uf : null;
+        $tipoDuto = $obra->tipo_duto ? $obra->tipo_duto : null;
+        $tipoEstrutura = $obra->funcao_estrutura ? $obra->funcao_estrutura : null;
+        $nivel_duto = $obra->nivel_duto ? $obra->nivel_duto : null;
+        $bitola =  $obra->bitola ? $obra->bitola : null;
+        
+        $uf = $atributoUf ? ['uf' => Obra::where('uf', $this->uf)->with('uf')->first()] : [];
 
         $hidroviaria = $this->tipo === 'Hidroviário' ? [
             'ampliacaoCapacidade' => SimNao::where('id', (int) $this->ampliacaoCapacidade)->first(),
@@ -79,7 +88,7 @@ class ObraResource extends JsonResource
         ] : [];
 
         $ferroviaria = $this->tipo === 'Ferroviário' ? [
-            'bitola' => Obra::where('bitola', $this->bitola)->with('bitola')->first(),
+            'bitola' => $bitola ? Obra::where('bitola', $this->bitola)->with('bitola')->first() : null,
         ] : [];
 
         $portuaria = $this->tipo === 'Portuário' ? [
@@ -87,11 +96,11 @@ class ObraResource extends JsonResource
         ] : [];
 
         $conditionalArray = $this->tipo === 'Dutoviário' ? [
-                'tipo_duto' => Obra::where('tipo_duto', $this->tipo_duto)->with('tipo_duto')->first(),
-                'funcao_estrutura' => Obra::where('funcao_estrutura', $this->funcao_estrutura)->with('funcao_estrutura')->first(),
-                'nivel_duto' => Obra::where('nivel_duto', $this->nivel_duto)->with('nivel_duto')->first(),
+                'tipo_duto' => $tipoDuto ? Obra::where('tipo_duto', $this->tipo_duto)->with('tipo_duto')->first() : null,
+                'funcao_estrutura' => $tipoEstrutura ? Obra::where('funcao_estrutura', $this->funcao_estrutura)->with('funcao_estrutura')->first() : null,
+                'nivel_duto' =>  $nivel_duto ? Obra::where('nivel_duto', $this->nivel_duto)->with('nivel_duto')->first() : null,
             ] : [];
 
-        return $baseArray + $conditionalArray + $hidroviaria  + $portuaria + $ferroviaria;
+        return $baseArray + $conditionalArray + $hidroviaria  + $portuaria + $ferroviaria + $uf;
     }
 }
