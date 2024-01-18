@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class HandleUploadController extends Controller
 {
@@ -26,8 +28,10 @@ class HandleUploadController extends Controller
             try {
                 if ($file) {
                     $filename = time() . '_' . $file->getClientOriginalName();
-                    $path = $file->storeAs('uploads', $filename, 'public');
+                    $path = $file->storeAs('arquivos', $filename, 'public');
                     $uploadedFilePaths[$fileKey] = $path;
+					Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Upload: '.$path, 'date' => Carbon::now()->toDateTimeString()]);
+    
                 } else {
                     // Optional: Add logic here if a file is not uploaded.
                     // For example, you could add a message to the array indicating the file was not provided.
