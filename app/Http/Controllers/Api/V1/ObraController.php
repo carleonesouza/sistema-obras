@@ -7,8 +7,10 @@ use App\Http\Requests\Obra\DeleteObraRequest;
 use App\Http\Requests\Obra\StoreObraRequest;
 use App\Http\Requests\Obra\UpdateObraRequest;
 use App\Http\Resources\ObraResource;
+use App\Models\FuncaoEstrutura;
 use App\Models\Municipio;
 use App\Models\Obra;
+use App\Models\Produto;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -190,12 +192,26 @@ class ObraController extends Controller
             }
 
             $data = $request->except(['id', 'produtos', 'municipios']);
+
+            if (array_key_exists('funcao_estrutura', $data)) {
+                $funcaoEstruturaId = $data['funcao_estrutura'];
+                if (!FuncaoEstrutura::find($funcaoEstruturaId)) {
+                    return response()->json('Função Estrutura Inválida', 400);
+                }
+            }
+            
             $obra->update($data);
 
             // Update 'produtos' relationship if 'produtos' is provided
-            if ($request->filled('produtos'))  {
-                $obra->produtos()->attach($request->produtos);
+            if ($request->filled('produtos')) {
+                foreach ($request->produtos as $produtoId) {
+                    if (!Produto::find($produtoId)) {
+                        return response()->json('ID do Produto Inválido: ' . $produtoId, 400);
+                    }
+                }
+                $obra->produtos()->sync($request->produtos);
             }
+
 
             if ($request->filled('municipios')) {
                 foreach ($request->input('municipios') as $municipioData) {
@@ -210,6 +226,7 @@ class ObraController extends Controller
                 }
             }
 
+          
             return ObraResource::make($obra->load(['produtos', 'municipios']));
         } catch (Exception $e) {
             Log::error('Error updating Obra: ' . $e->getMessage());

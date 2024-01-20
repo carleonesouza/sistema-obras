@@ -3,22 +3,19 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Exception;
 
 class HandleUploadController extends Controller
 {
     public function store(Request $request)
     {
-        // Validation can be uncommented if needed.
-        // $request->validate([
-        //     'documentosAdicionais' => 'required|file',
-        //     'arquivoGeorreferenciado' => 'required|file',
-        // ]);
-
+       
         $files = ['documentosAdicionais', 'arquivoGeorreferenciado'];
         $uploadedFilePaths = [];
 
@@ -27,14 +24,12 @@ class HandleUploadController extends Controller
 
             try {
                 if ($file) {
-                    $filename = time() . '_' . $file->getClientOriginalName();
+                    // Sanitize original file name and prepend timestamp
+                    $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
                     $path = $file->storeAs('arquivos', $filename, 'public');
-                    $uploadedFilePaths[$fileKey] = $path;
-					Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Upload: '.$path, 'date' => Carbon::now()->toDateTimeString()]);
-    
+                    $uploadedFilePaths[$fileKey] = Storage::url($path);
+                    Log::channel('user_activity')->info('action', ['user' => Auth::user()->email, 'action' => 'Upload: '.$path, 'date' => Carbon::now()->toDateTimeString()]);
                 } else {
-                    // Optional: Add logic here if a file is not uploaded.
-                    // For example, you could add a message to the array indicating the file was not provided.
                     $uploadedFilePaths[$fileKey] = 'File not provided';
                 }
             } catch (Exception $e) {
